@@ -8,7 +8,16 @@ namespace Heartache
         const string DEBUG_INPUT_PATH_OVERRIDE = @"C:\Undertale-exp\UNDERTALE\data.win";
         const string DEBUG_OUTPUT_PATH_OVERRIDE = @"C:\Undertale-exp\dump";
 
-        public static string GetDataWinPath()
+        public static BinaryReader GetDataWinBinaryReader()
+        {
+            string dataWinpath = _GetDataWinPath();
+            FileStream stream = new FileStream(dataWinpath, FileMode.Open);
+            BinaryReader reader = new BinaryReader(stream);
+
+            return reader;
+        }
+
+        static string _GetDataWinPath()
         {
             if (!string.IsNullOrEmpty(DEBUG_INPUT_PATH_OVERRIDE))
             {

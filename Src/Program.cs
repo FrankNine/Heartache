@@ -9,11 +9,9 @@ namespace Heartache
         [STAThreadAttribute]
         static void Main(string[] args)
         {
-            string dataWinpath = FileIO.GetDataWinPath();
             string outputPath = FileIO.GetOutputPath();
 
-            FileStream stream = new FileStream(dataWinpath, FileMode.Open);
-            BinaryReader reader = new BinaryReader(stream);
+            BinaryReader reader = FileIO.GetDataWinBinaryReader();
 
             // Main Chunk FORM
             string chunk = _ReadChunk(reader);
