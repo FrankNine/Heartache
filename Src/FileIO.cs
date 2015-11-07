@@ -47,5 +47,12 @@ namespace Heartache
             DirectoryInfo info = new DirectoryInfo(path);
             info.Attributes &= ~FileAttributes.ReadOnly;
         }
+
+        public static void DumpToFile(string fileName, byte[] dataTodump)
+        {
+            FileStream file = File.Create(fileName, dataTodump.Length);
+            file.Write(dataTodump, offset: 0, count: dataTodump.Length);
+            file.Close();
+        }
     }
 }
