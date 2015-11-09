@@ -294,7 +294,5 @@ namespace Heartache
                 file.Close();
             }
         }
-
-
     }
 }

@@ -69,7 +69,32 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BinaryStreamOperator.cs" />
+    <Compile Include="Chunk\Agrp.cs" />
+    <Compile Include="Chunk\Audo.cs" />
+    <Compile Include="Chunk\Bgnd.cs" />
+    <Compile Include="Chunk\Chunk.cs" />
+    <Compile Include="Chunk\Code.cs" />
+    <Compile Include="Chunk\Dafl.cs" />
+    <Compile Include="Chunk\Extn.cs" />
+    <Compile Include="Chunk\Font.cs" />
+    <Compile Include="Chunk\From.cs" />
+    <Compile Include="Chunk\Func.cs" />
+    <Compile Include="Chunk\Gen8.cs" />
+    <Compile Include="Chunk\Objt.cs" />
+    <Compile Include="Chunk\Optn.cs" />
+    <Compile Include="Chunk\Path.cs" />
+    <Compile Include="Chunk\Room.cs" />
+    <Compile Include="Chunk\Scpt.cs" />
+    <Compile Include="Chunk\Shdr.cs" />
+    <Compile Include="Chunk\Sond.cs" />
+    <Compile Include="Chunk\Sprt.cs" />
+    <Compile Include="Chunk\Strg.cs" />
+    <Compile Include="Chunk\Tmln.cs" />
+    <Compile Include="Chunk\Tpag.cs" />
+    <Compile Include="Chunk\Txtr.cs" />
+    <Compile Include="Chunk\Vari.cs" />
     <Compile Include="FileIO.cs" />
+    <Compile Include="IFile.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Test\BinaryStreamOperatorTests.cs" />

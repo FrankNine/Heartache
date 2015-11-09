@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace Heartache
 {
-    class FileIO
+    class FileIO : IFile
     {
         const string DEBUG_INPUT_PATH_OVERRIDE = @"C:\Undertale-exp\UNDERTALE\data.win";
         const string DEBUG_OUTPUT_PATH_OVERRIDE = @"C:\Undertale-exp\dump";
