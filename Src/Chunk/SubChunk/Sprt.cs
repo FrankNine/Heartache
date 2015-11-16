@@ -26,7 +26,7 @@ namespace Heartache.Chunk
 
         public override string GetFolder(string rootPath)
         {
-            return System.IO.Path.Combine(rootPath, "Sprt");
+            return System.IO.Path.Combine(rootPath, "SPRT");
         }
 
         public override void Import(IFile fileSystem, string rootPath)

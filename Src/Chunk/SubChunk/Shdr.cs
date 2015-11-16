@@ -1,31 +1,28 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 
 namespace Heartache.Chunk
 {
-    class Vari : Chunk
+    class Shdr : Chunk
     {
-        List<byte[]> elementList = new List<byte[]>();
+        int chunkSize = 0;
+        byte[] content = null;
 
         public override void ParseBinary(BinaryReader reader)
         {
-            ChunkOperator.DumpSingleNamedFixedSize(reader, 8, elementList);
+            ChunkOperator.DumpChunkAsAWhole(reader, ref chunkSize, ref content);
         }
 
         public override void Export(IFile fileSystem, string rootPath)
         {
             string exportPath = GetFolder(rootPath);
             fileSystem.CreateDirectoryWithoutReadOnly(exportPath);
-            for (int i = 0; i < elementList.Count; i++)
-            {
-                fileSystem.WriteText(System.IO.Path.Combine(exportPath, i.ToString()), elementList[i].ToString());
-            }
+            fileSystem.WriteBinary(System.IO.Path.Combine(exportPath, "0"), content);
         }
 
         public override string GetFolder(string rootPath)
         {
-            return System.IO.Path.Combine(rootPath, "Vari");
+            return System.IO.Path.Combine(rootPath, "SHDR");
         }
 
         public override void Import(IFile fileSystem, string rootPath)

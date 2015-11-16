@@ -3,7 +3,7 @@ using System.IO;
 
 namespace Heartache.Chunk
 {
-    class Tpag : Chunk
+    class Optn : Chunk
     {
         int chunkSize = 0;
         byte[] content = null;
@@ -13,7 +13,7 @@ namespace Heartache.Chunk
             ChunkOperator.DumpChunkAsAWhole(reader, ref chunkSize, ref content);
         }
 
-        public override void Export(IFile fileSystem, string rootPath)
+        public override void Export(IFile fileSystem,string rootPath)
         {
             string exportPath = GetFolder(rootPath);
             fileSystem.CreateDirectoryWithoutReadOnly(exportPath);
@@ -22,13 +22,15 @@ namespace Heartache.Chunk
 
         public override string GetFolder(string rootPath)
         {
-            return System.IO.Path.Combine(rootPath, "Tpag");
+            return System.IO.Path.Combine(rootPath, "OPTN");
         }
 
         public override void Import(IFile fileSystem, string rootPath)
         {
             throw new NotImplementedException();
         }
+
+        
 
         public override void WriteBinary(BinaryWriter writer)
         {

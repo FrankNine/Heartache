@@ -55,6 +55,8 @@ namespace Heartache
 
         public void WriteBinary(string fileName, byte[] dataTodump)
         {
+            if(dataTodump == null) { return; }
+
             FileStream file = File.Create(fileName, dataTodump.Length);
             file.Write(dataTodump, offset: 0, count: dataTodump.Length);
             file.Close();

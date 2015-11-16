@@ -3,17 +3,17 @@ using System.IO;
 
 namespace Heartache.Chunk
 {
-    class Gen8 : Chunk
+    class Dafl : Chunk
     {
         int chunkSize = 0;
         byte[] content = null;
-
+        
         public override void ParseBinary(BinaryReader reader)
         {
             ChunkOperator.DumpChunkAsAWhole(reader, ref chunkSize, ref content);
         }
 
-        public override void Export(IFile fileSystem,string rootPath)
+        public override void Export(IFile fileSystem, string rootPath)
         {
             string exportPath = GetFolder(rootPath);
             fileSystem.CreateDirectoryWithoutReadOnly(exportPath);
@@ -22,7 +22,7 @@ namespace Heartache.Chunk
 
         public override string GetFolder(string rootPath)
         {
-            return System.IO.Path.Combine(rootPath, "Gen8");
+            return System.IO.Path.Combine(rootPath, "DAFL");
         }
 
         public override void Import(IFile fileSystem, string rootPath)
@@ -30,6 +30,7 @@ namespace Heartache.Chunk
             throw new NotImplementedException();
         }
 
+        
 
         public override void WriteBinary(BinaryWriter writer)
         {

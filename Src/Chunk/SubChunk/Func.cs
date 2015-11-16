@@ -1,31 +1,31 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Heartache.Chunk
 {
-    class Audo : Chunk
+    class Func : Chunk
     {
-        List<byte[]> audioList = new List<byte[]>();
+        List<byte[]> elementList = new List<byte[]>();
 
         public override void ParseBinary(BinaryReader reader)
         {
-            ChunkOperator.DumpAudio(reader, audioList);
+            ChunkOperator.DumpSingleNamedFixedSize(reader, 8, elementList);
         }
 
         public override void Export(IFile fileSystem, string rootPath)
         {
             string exportPath = GetFolder(rootPath);
             fileSystem.CreateDirectoryWithoutReadOnly(exportPath);
-            for (int i = 0; i < audioList.Count; i++)
+            for (int i = 0; i < elementList.Count; i++)
             {
-                fileSystem.WriteBinary(System.IO.Path.Combine(exportPath, i.ToString()), audioList[i]);
+                fileSystem.WriteText(System.IO.Path.Combine(exportPath, i.ToString()), elementList[i].ToString());
             }
         }
 
         public override string GetFolder(string rootPath)
         {
-            return System.IO.Path.Combine(rootPath, "Audo");
+            return System.IO.Path.Combine(rootPath, "FUNC");
         }
 
         public override void Import(IFile fileSystem, string rootPath)
@@ -33,7 +33,7 @@ namespace Heartache.Chunk
             throw new NotImplementedException();
         }
 
-        
+       
 
         public override void WriteBinary(BinaryWriter writer)
         {

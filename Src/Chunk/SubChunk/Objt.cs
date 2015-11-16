@@ -4,13 +4,14 @@ using System.IO;
 
 namespace Heartache.Chunk
 {
-    class Func : Chunk
+    class Objt : Chunk
     {
-        List<byte[]> elementList = new List<byte[]>();
+        int chunkSize;
+        List<NamedElement> elementList = new List<NamedElement>();
 
         public override void ParseBinary(BinaryReader reader)
         {
-            ChunkOperator.DumpSingleNamedFixedSize(reader, 8, elementList);
+            ChunkOperator.DumpSingleNamedArray(reader, ref chunkSize, elementList);
         }
 
         public override void Export(IFile fileSystem, string rootPath)
@@ -25,7 +26,7 @@ namespace Heartache.Chunk
 
         public override string GetFolder(string rootPath)
         {
-            return System.IO.Path.Combine(rootPath, "Func");
+            return System.IO.Path.Combine(rootPath, "OBJT");
         }
 
         public override void Import(IFile fileSystem, string rootPath)
@@ -33,7 +34,7 @@ namespace Heartache.Chunk
             throw new NotImplementedException();
         }
 
-       
+        
 
         public override void WriteBinary(BinaryWriter writer)
         {

@@ -27,6 +27,7 @@ namespace Heartache
             Console.WriteLine("FORM chunk size: " + formChunkSize);
 
             form.ParseBinary(reader);
+            form.Export(new FileIO(), outputPath);
            
             reader.Dispose();
             Console.WriteLine("Press enter to close...");

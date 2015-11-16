@@ -3,7 +3,7 @@ using System.IO;
 
 namespace Heartache.Chunk
 {
-    class Scpt : Chunk
+    class Bgnd : Chunk
     {
         int chunkSize = 0;
         byte[] content = null;
@@ -22,13 +22,14 @@ namespace Heartache.Chunk
 
         public override string GetFolder(string rootPath)
         {
-            return System.IO.Path.Combine(rootPath, "Scpt");
+            return System.IO.Path.Combine(rootPath, "BGND");
         }
 
-        public override void Import(IFile fileSystem, string rootPath)
+        public override void Import(IFile fileSystem,string rootPath)
         {
             throw new NotImplementedException();
         }
+
 
         public override void WriteBinary(BinaryWriter writer)
         {

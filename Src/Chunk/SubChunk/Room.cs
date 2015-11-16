@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Heartache.Chunk
 {
-    class Txtr : Chunk
+    class Room : Chunk
     {
-        List<byte[]> elementList = new List<byte[]>();
+        int chunkSize;
+        List<NamedElement> elementList = new List<NamedElement>();
 
         public override void ParseBinary(BinaryReader reader)
         {
-            ChunkOperator.DumpTexture(reader, elementList);
+            ChunkOperator.DumpSingleNamedArray(reader, ref chunkSize, elementList);
         }
 
         public override void Export(IFile fileSystem, string rootPath)
@@ -28,14 +26,13 @@ namespace Heartache.Chunk
 
         public override string GetFolder(string rootPath)
         {
-            return System.IO.Path.Combine(rootPath, "Txtr");
+            return System.IO.Path.Combine(rootPath, "ROOM");
         }
 
         public override void Import(IFile fileSystem, string rootPath)
         {
             throw new NotImplementedException();
         }
-
 
         public override void WriteBinary(BinaryWriter writer)
         {

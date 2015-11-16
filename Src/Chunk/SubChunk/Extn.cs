@@ -1,38 +1,35 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 
 namespace Heartache.Chunk
 {
-    class Room : Chunk
+    class Extn : Chunk
     {
-        int chunkSize;
-        List<NamedElement> elementList = new List<NamedElement>();
+        int chunkSize = 0;
+        byte[] content = null;
 
         public override void ParseBinary(BinaryReader reader)
         {
-            ChunkOperator.DumpSingleNamedArray(reader, ref chunkSize, elementList);
+            ChunkOperator.DumpChunkAsAWhole(reader, ref chunkSize, ref content);
         }
 
         public override void Export(IFile fileSystem, string rootPath)
         {
             string exportPath = GetFolder(rootPath);
             fileSystem.CreateDirectoryWithoutReadOnly(exportPath);
-            for (int i = 0; i < elementList.Count; i++)
-            {
-                fileSystem.WriteText(System.IO.Path.Combine(exportPath, i.ToString()), elementList[i].ToString());
-            }
+            fileSystem.WriteBinary(System.IO.Path.Combine(exportPath, "0"), content);
         }
 
         public override string GetFolder(string rootPath)
         {
-            return System.IO.Path.Combine(rootPath, "Room");
+            return System.IO.Path.Combine(rootPath, "EXTN");
         }
 
         public override void Import(IFile fileSystem, string rootPath)
         {
             throw new NotImplementedException();
         }
+
 
         public override void WriteBinary(BinaryWriter writer)
         {

@@ -3,7 +3,7 @@ using System.IO;
 
 namespace Heartache.Chunk
 {
-    class Extn : Chunk
+    class Agrp : Chunk
     {
         int chunkSize = 0;
         byte[] content = null;
@@ -22,7 +22,7 @@ namespace Heartache.Chunk
 
         public override string GetFolder(string rootPath)
         {
-            return System.IO.Path.Combine(rootPath, "Extn");
+            return System.IO.Path.Combine(rootPath, "AGRP");
         }
 
         public override void Import(IFile fileSystem, string rootPath)
