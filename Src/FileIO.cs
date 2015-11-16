@@ -41,14 +41,19 @@ namespace Heartache
             return folderBrowserDialog.SelectedPath;
         }
 
-        public static void CreateDirectoryWithoutReadOnly(string path)
+        public void CreateDirectoryWithoutReadOnly(string path)
         {
             Directory.CreateDirectory(path);
             DirectoryInfo info = new DirectoryInfo(path);
             info.Attributes &= ~FileAttributes.ReadOnly;
         }
 
-        public static void DumpToFile(string fileName, byte[] dataTodump)
+        public void WriteText(string fileName, string text)
+        {
+            File.WriteAllText(fileName, text);
+        }
+
+        public void WriteBinary(string fileName, byte[] dataTodump)
         {
             FileStream file = File.Create(fileName, dataTodump.Length);
             file.Write(dataTodump, offset: 0, count: dataTodump.Length);

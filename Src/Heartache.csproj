@@ -69,6 +69,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BinaryStreamOperator.cs" />
+    <Compile Include="ChunkOperator.cs" />
     <Compile Include="Chunk\Agrp.cs" />
     <Compile Include="Chunk\Audo.cs" />
     <Compile Include="Chunk\Bgnd.cs" />
@@ -77,7 +78,7 @@
     <Compile Include="Chunk\Dafl.cs" />
     <Compile Include="Chunk\Extn.cs" />
     <Compile Include="Chunk\Font.cs" />
-    <Compile Include="Chunk\From.cs" />
+    <Compile Include="Chunk\Form.cs" />
     <Compile Include="Chunk\Func.cs" />
     <Compile Include="Chunk\Gen8.cs" />
     <Compile Include="Chunk\Objt.cs" />
