@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
+using Newtonsoft.Json;
 
 namespace Heartache.Chunk
 {
@@ -11,9 +10,47 @@ namespace Heartache.Chunk
     {
         List<byte[]> elementList = new List<byte[]>();
 
+        class Data
+        {
+            public List<string> exportedImageNameList = new List<string>();
+        }
+        Data _data = new Data();
+
         public override void ParseBinary(BinaryReader reader)
         {
-            ChunkOperator.DumpTexture(reader, elementList);
+            int chunkSize = BinaryStreamOperator.ReadSize(reader);
+            if (chunkSize == 0) { return; }
+
+            long chunkStartingPosition = reader.BaseStream.Position;
+
+            int elementCount = BinaryStreamOperator.ReadSize(reader);
+            int[] elementPositions = new int[elementCount];
+
+            for (int i = 0; i < elementCount; i++)
+            {
+                elementPositions[i] = BinaryStreamOperator.ReadPosition(reader);
+            }
+
+            int[] pngPositions = new int[elementCount];
+            for (int i = 0; i < elementCount; i++)
+            {
+                int elementPosition = elementPositions[i];
+                reader.BaseStream.Seek(elementPosition, SeekOrigin.Begin);
+
+                BinaryStreamOperator.ReadPosition(reader);
+                pngPositions[i] = BinaryStreamOperator.ReadPosition(reader);
+            }
+
+            for (int i = 0; i < elementCount; i++)
+            {
+                int pngPosition = pngPositions[i];
+                reader.BaseStream.Seek(pngPosition, SeekOrigin.Begin);
+
+                long elementDataLength = (((i != elementCount - 1) ? pngPositions[i + 1] : (chunkSize + chunkStartingPosition)) - pngPositions[i]);
+
+                byte[] element = BinaryStreamOperator.ReadBinary(reader, (int)elementDataLength);
+                elementList.Add(element);
+            }
         }
 
         public override void Export(IFile fileSystem, string rootPath)
@@ -22,8 +59,13 @@ namespace Heartache.Chunk
             fileSystem.CreateDirectoryWithoutReadOnly(exportPath);
             for (int i = 0; i < elementList.Count; i++)
             {
-                fileSystem.WriteText(System.IO.Path.Combine(exportPath, i.ToString()), elementList[i].ToString());
+                string imageFileName = i.ToString() + ".png";
+                fileSystem.WriteBinary(System.IO.Path.Combine(exportPath, imageFileName), elementList[i]);
+                _data.exportedImageNameList.Add(imageFileName);
             }
+
+            string indexJson = JsonConvert.SerializeObject(_data, Formatting.Indented);
+            fileSystem.WriteText(System.IO.Path.Combine(exportPath, "index.txt"), indexJson);
         }
 
         public override string GetFolder(string rootPath)

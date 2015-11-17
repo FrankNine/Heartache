@@ -2,23 +2,30 @@
 using System.Collections.Generic;
 using System.IO;
 
+using Newtonsoft.Json;
+
 namespace Heartache.Chunk
 {
     class Strg : Chunk
     {
-        List<string> stringList = new List<string>();
+        class Data
+        {
+            public List<string> stringList = new List<string>();
+        }
+
+        Data _data = new Data();
 
         public override void ParseBinary(BinaryReader reader)
         {
-            ChunkOperator.DumpString(reader, stringList);
+            ChunkOperator.DumpString(reader, _data.stringList);
         }
 
         public override void Export(IFile fileSystem, string rootPath)
         {
             string exportPath = GetFolder(rootPath);
             fileSystem.CreateDirectoryWithoutReadOnly(exportPath);
-            
-                fileSystem.WriteText(System.IO.Path.Combine(exportPath, "0"), stringList[0].ToString());
+            string serializedString = JsonConvert.SerializeObject(_data, Formatting.Indented);
+            fileSystem.WriteText(System.IO.Path.Combine(exportPath, "Strg.txt"), serializedString);
         }
 
         public override string GetFolder(string rootPath)
@@ -31,7 +38,7 @@ namespace Heartache.Chunk
             throw new NotImplementedException();
         }
 
-        
+
 
         public override void WriteBinary(BinaryWriter writer)
         {

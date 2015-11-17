@@ -125,39 +125,7 @@ namespace Heartache
 
         public static void DumpTexture(BinaryReader reader, List<byte[]> elementList)
         {
-            int chunkSize = BinaryStreamOperator.ReadSize(reader);
-            if (chunkSize == 0) { return; }
-
-            long chunkStartingPosition = reader.BaseStream.Position;
-
-            int elementCount = BinaryStreamOperator.ReadSize(reader);
-            int[] elementPositions = new int[elementCount];
-
-            for (int i = 0; i < elementCount; i++)
-            {
-                elementPositions[i] = BinaryStreamOperator.ReadPosition(reader);
-            }
-
-            int[] pngPositions = new int[elementCount];
-            for (int i = 0; i < elementCount; i++)
-            {
-                int elementPosition = elementPositions[i];
-                reader.BaseStream.Seek(elementPosition, SeekOrigin.Begin);
-
-                BinaryStreamOperator.ReadPosition(reader);
-                pngPositions[i] = BinaryStreamOperator.ReadPosition(reader);
-            }
-
-            for (int i = 0; i < elementCount; i++)
-            {
-                int pngPosition = pngPositions[i];
-                reader.BaseStream.Seek(pngPosition, SeekOrigin.Begin);
-
-                long elementDataLength = (((i != elementCount - 1) ? pngPositions[i + 1] : (chunkSize + chunkStartingPosition)) - pngPositions[i]);
-
-                byte[] element = BinaryStreamOperator.ReadBinary(reader, (int)elementDataLength);
-                elementList.Add(element);
-            }
+            
         }
 
         public static void DumpAudio( BinaryReader reader, List<byte[]> audioList)
