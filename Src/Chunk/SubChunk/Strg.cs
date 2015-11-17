@@ -17,7 +17,28 @@ namespace Heartache.Chunk
 
         public override void ParseBinary(BinaryReader reader)
         {
-            ChunkOperator.DumpString(reader, _data.stringList);
+            int chunkSize = BinaryStreamOperator.ReadSize(reader);
+            if (chunkSize == 0) { return; }
+
+            long chunkStartingPosition = reader.BaseStream.Position;
+
+            int elementCount = BinaryStreamOperator.ReadSize(reader);
+
+            int[] elementPositions = new int[elementCount];
+
+            for (int i = 0; i < elementCount; i++)
+            {
+                elementPositions[i] = BinaryStreamOperator.ReadPosition(reader);
+            }
+
+            for (int i = 0; i < elementCount; i++)
+            {
+                int elementPosition = elementPositions[i];
+                reader.BaseStream.Seek(elementPosition, SeekOrigin.Begin);
+                _data.stringList.Add(BinaryStreamOperator.ReadPascalString(reader));
+            }
+
+            reader.BaseStream.Seek(chunkStartingPosition + chunkSize, SeekOrigin.Begin);
         }
 
         public override void Export(IFile fileSystem, string rootPath)
