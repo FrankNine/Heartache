@@ -59,6 +59,11 @@ namespace Heartache
             return reader.ReadInt32();
         }
 
+        public static Int16 ReadInt16(BinaryReader reader)
+        {
+            return reader.ReadInt16();
+        }
+
 
         public static int ReadPosition(BinaryReader reader, ref int readByte)
         {
