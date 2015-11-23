@@ -13,8 +13,12 @@ namespace Heartache.Chunk
         {
             public class FontElement
             {
-                public int firstElementNamePosition;
-                public int secondElementNamePosition;
+                public long firstElementNamePosition;
+                public int firstElementNameIndex;
+                public string firstElementName;
+                public long secondElementNamePosition;
+                public int secondElementNameIndex;
+                public string secondElementName;
                 public byte[] unknown;
 
                 public List<Glyph> glyphList = new List<Glyph>();
@@ -69,7 +73,7 @@ namespace Heartache.Chunk
                 }
 
                 List<Data.Glyph> glyphList = new List<Data.Glyph>();
-                for(int g = 0; g < glyphCount; g++)
+                for (int g = 0; g < glyphCount; g++)
                 {
                     Data.Glyph glyph = new Data.Glyph();
                     reader.BaseStream.Seek(glyphPosition[g], SeekOrigin.Begin);
@@ -96,6 +100,19 @@ namespace Heartache.Chunk
             }
         }
 
+        public void ResolveString(Strg stringChunk)
+        {
+            foreach (Data.FontElement font in _data.fontElementList)
+            {
+                stringChunk.LookUpStringIndexAndContent(font.firstElementNamePosition,
+                                                        ref font.firstElementNameIndex,
+                                                        ref font.firstElementName);
+                stringChunk.LookUpStringIndexAndContent(font.secondElementNamePosition,
+                                                        ref font.secondElementNameIndex,
+                                                        ref font.secondElementName);
+            }
+        }
+
         public override void Export(IFile fileSystem, string rootPath)
         {
             string exportPath = GetFolder(rootPath);
@@ -116,7 +133,7 @@ namespace Heartache.Chunk
             throw new NotImplementedException();
         }
 
-        
+
 
         public override void WriteBinary(BinaryWriter writer)
         {

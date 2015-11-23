@@ -68,6 +68,8 @@ namespace Heartache.Chunk
                     case "AUDO": audo.ParseBinary(reader); break;
                 }
             }
+
+            font.ResolveString(strg);
         }
 
         public override void Export(IFile fileSystem, string rootPath)
