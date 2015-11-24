@@ -69,6 +69,12 @@ namespace Heartache.Chunk
                 }
             }
 
+            _ResolveStringIndex();
+        }
+
+        void _ResolveStringIndex()
+        {
+            gen8.ResolveString(strg);
             font.ResolveString(strg);
         }
 

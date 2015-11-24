@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Heartache.Primitive;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,12 +14,8 @@ namespace Heartache.Chunk
         {
             public class FontElement
             {
-                public long firstElementNamePosition;
-                public int firstElementNameIndex;
-                public string firstElementName;
-                public long secondElementNamePosition;
-                public int secondElementNameIndex;
-                public string secondElementName;
+                public StringEntry fontName = new StringEntry();
+                public StringEntry fontFilename = new StringEntry();
                 public byte[] unknown;
 
                 public List<Glyph> glyphList = new List<Glyph>();
@@ -92,8 +89,8 @@ namespace Heartache.Chunk
 
                 _data.fontElementList.Add(new Data.FontElement
                 {
-                    firstElementNamePosition = firstElementNamePosition,
-                    secondElementNamePosition = secondElementNamePosition,
+                    fontName = new StringEntry { position = firstElementNamePosition },
+                    fontFilename = new StringEntry { position = secondElementNamePosition },
                     unknown = unknownSector,
                     glyphList = glyphList
                 });
@@ -104,12 +101,8 @@ namespace Heartache.Chunk
         {
             foreach (Data.FontElement font in _data.fontElementList)
             {
-                stringChunk.LookUpStringIndexAndContent(font.firstElementNamePosition,
-                                                        ref font.firstElementNameIndex,
-                                                        ref font.firstElementName);
-                stringChunk.LookUpStringIndexAndContent(font.secondElementNamePosition,
-                                                        ref font.secondElementNameIndex,
-                                                        ref font.secondElementName);
+                font.fontName = stringChunk.LookUpStringEntryByPosition(font.fontName.position);
+                font.fontFilename = stringChunk.LookUpStringEntryByPosition(font.fontFilename.position);
             }
         }
 

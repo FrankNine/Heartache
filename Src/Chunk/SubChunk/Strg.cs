@@ -4,6 +4,8 @@ using System.IO;
 
 using Newtonsoft.Json;
 
+using Heartache.Primitive;
+
 namespace Heartache.Chunk
 {
     class Strg : Chunk
@@ -11,12 +13,6 @@ namespace Heartache.Chunk
         class Data
         {
             public List<StringEntry> stringList = new List<StringEntry>();
-        }
-
-        class StringEntry
-        {
-            public long position;
-            public string content;
         }
 
         Data _data = new Data();
@@ -43,6 +39,7 @@ namespace Heartache.Chunk
                 reader.BaseStream.Seek(elementPosition, SeekOrigin.Begin);
                 _data.stringList.Add(new StringEntry
                 {
+                    index = i,
                     position = elementPosition,
                     content = BinaryStreamOperator.ReadPascalString(reader)
                 });
@@ -51,10 +48,9 @@ namespace Heartache.Chunk
             reader.BaseStream.Seek(chunkStartingPosition + chunkSize, SeekOrigin.Begin);
         }
 
-        public void LookUpStringIndexAndContent(long position, ref int index, ref string content)
+        public StringEntry LookUpStringEntryByPosition(long position)
         {
-            index = _data.stringList.FindIndex(se => se.position+4 == position);
-            content = _data.stringList[index].content;
+            return _data.stringList.Find(se => se.position + 4 == position);
         }
 
         public override void Export(IFile fileSystem, string rootPath)
