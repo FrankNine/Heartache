@@ -61,5 +61,15 @@ namespace Heartache
             file.Write(dataTodump, offset: 0, count: dataTodump.Length);
             file.Close();
         }
+
+        public string ReadText(string fileName)
+        {
+            return File.ReadAllText(fileName);
+        }
+
+        public byte[] ReadBinary(string fileName)
+        {
+            return File.ReadAllBytes(fileName);
+        }
     }
 }

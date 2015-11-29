@@ -3,7 +3,12 @@
     class StringEntry
     {
         public int index;
-        public long position;
+        public int position;
         public string content;
+
+        public static int GetSzie()
+        {
+            return sizeof(int);
+        }
     }
 }
