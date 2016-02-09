@@ -106,7 +106,28 @@ namespace Heartache.Chunk
 
         public override void Import(IFile fileSystem, string rootPath)
         {
-            throw new NotImplementedException();
+            gen8.Import(fileSystem, rootPath);
+            optn.Import(fileSystem, rootPath);
+            extn.Import(fileSystem, rootPath);
+            sond.Import(fileSystem, rootPath);
+            agrp.Import(fileSystem, rootPath);
+            sprt.Import(fileSystem, rootPath);
+            bgnd.Import(fileSystem, rootPath);
+            path.Import(fileSystem, rootPath);
+            scpt.Import(fileSystem, rootPath);
+            shdr.Import(fileSystem, rootPath);
+            font.Import(fileSystem, rootPath);
+            tmln.Import(fileSystem, rootPath);
+            objt.Import(fileSystem, rootPath);
+            room.Import(fileSystem, rootPath);
+            dafl.Import(fileSystem, rootPath);
+            tpag.Import(fileSystem, rootPath);
+            code.Import(fileSystem, rootPath);
+            vari.Import(fileSystem, rootPath);
+            func.Import(fileSystem, rootPath);
+            strg.Import(fileSystem, rootPath);
+            txtr.Import(fileSystem, rootPath);
+            audo.Import(fileSystem, rootPath);
         }
 
         public override void WriteBinary(BinaryWriter writer)

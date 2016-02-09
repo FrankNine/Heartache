@@ -9,11 +9,16 @@ namespace Heartache
     {
         static Form form = new Form();
 
-        [STAThreadAttribute]
+        [STAThread]
         static void Main(string[] args)
         {
+            Reassemble();
+        }
+
+        static void Disassemble()
+        {
             BinaryReader reader = FileIO.GetDataWinBinaryReader();
-            string outputPath = FileIO.GetOutputPath();
+            string outputPath = FileIO.GetDumpFolderPath();
 
             // Main Chunk FORM
             string mainChunkTag = BinaryStreamOperator.ReadChunkTag(reader);
@@ -28,8 +33,19 @@ namespace Heartache
 
             form.ParseBinary(reader);
             form.Export(new FileIO(), outputPath);
-           
+
             reader.Dispose();
+            Console.WriteLine("Press enter to close...");
+            Console.ReadLine();
+        }
+
+        static void Reassemble()
+        {
+            form.Import(new FileIO(), FileIO.GetDumpFolderPath());
+            BinaryWriter writer = FileIO.GetDataWinBinaryWriter();
+            form.WriteBinary(writer);
+            writer.Dispose();
+
             Console.WriteLine("Press enter to close...");
             Console.ReadLine();
         }

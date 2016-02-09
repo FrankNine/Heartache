@@ -27,13 +27,15 @@ namespace Heartache.Chunk
 
         public override void Import(IFile fileSystem, string rootPath)
         {
-            throw new NotImplementedException();
+            string importPath = GetFolder(rootPath);
+            string agrpFilePath = System.IO.Path.Combine(importPath, "0");
+            content = fileSystem.ReadBinary(agrpFilePath);
         }
 
 
         public override void WriteBinary(BinaryWriter writer)
         {
-            throw new NotImplementedException();
+            writer.Write(content);
         }
     }
 }
