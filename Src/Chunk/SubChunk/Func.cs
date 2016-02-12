@@ -1,12 +1,24 @@
-﻿using System;
+﻿using System.Linq;
 using System.Collections.Generic;
 using System.IO;
+
+using Newtonsoft.Json;
 
 namespace Heartache.Chunk
 {
     class Func : Chunk
     {
+        const string TAG = "FUNC";
+        const string INDEX_FILENAME = "index.txt";
+
         List<byte[]> elementList = new List<byte[]>();
+
+        class Data
+        {
+            public List<string> funcNameList = new List<string>();
+        }
+
+        Data _data = new Data();
 
         public override void ParseBinary(BinaryReader reader)
         {
@@ -15,29 +27,26 @@ namespace Heartache.Chunk
 
         public override void Export(IFile fileSystem, string rootPath)
         {
-            string exportPath = GetFolder(rootPath);
-            fileSystem.CreateDirectoryWithoutReadOnly(exportPath);
-            for (int i = 0; i < elementList.Count; i++)
-            {
-                fileSystem.WriteText(System.IO.Path.Combine(exportPath, i.ToString()), elementList[i].ToString());
-            }
+           
         }
 
         public override string GetFolder(string rootPath)
         {
-            return System.IO.Path.Combine(rootPath, "FUNC");
+            return System.IO.Path.Combine(rootPath, TAG);
         }
 
         public override void Import(IFile fileSystem, string rootPath)
         {
-            throw new NotImplementedException();
+            
         }
 
        
 
         public override void WriteBinary(BinaryWriter writer)
         {
-            throw new NotImplementedException();
+            writer.Write(TAG);
+            writer.Write(4 * _data.funcNameList.Count + elementList.Sum(e => e.Length));
+            elementList.ForEach(e => writer.Write(e));
         }
     }
 }

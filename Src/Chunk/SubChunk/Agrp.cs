@@ -1,10 +1,12 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 
 namespace Heartache.Chunk
 {
     class Agrp : Chunk
     {
+        const string TAG = "AGRP";
+        const string FILENAME = "0";
+
         int chunkSize = 0;
         byte[] content = null;
 
@@ -15,27 +17,24 @@ namespace Heartache.Chunk
 
         public override void Export(IFile fileSystem, string rootPath)
         {
-            string exportPath = GetFolder(rootPath);
-            fileSystem.CreateDirectoryWithoutReadOnly(exportPath);
-            fileSystem.WriteBinary(System.IO.Path.Combine(exportPath, "0"), content);
+            string exportFolder = GetFolder(rootPath);
+            ChunkOperator.ExportChunkAsAWhole(fileSystem, exportFolder, FILENAME, content);
         }
 
         public override string GetFolder(string rootPath)
         {
-            return System.IO.Path.Combine(rootPath, "AGRP");
+            return System.IO.Path.Combine(rootPath, TAG);
         }
 
         public override void Import(IFile fileSystem, string rootPath)
         {
-            string importPath = GetFolder(rootPath);
-            string agrpFilePath = System.IO.Path.Combine(importPath, "0");
-            content = fileSystem.ReadBinary(agrpFilePath);
+            string importFolder = GetFolder(rootPath);
+            ChunkOperator.ImportChunkAsAWhole(fileSystem, importFolder, FILENAME, ref content);
         }
-
 
         public override void WriteBinary(BinaryWriter writer)
         {
-            writer.Write(content);
+            ChunkOperator.WriteChunkAsAWhole(writer, TAG, content);
         }
     }
 }

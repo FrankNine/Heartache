@@ -1,5 +1,5 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
+using System.Linq;
 using System.Collections.Generic;
 
 using Newtonsoft.Json;
@@ -9,6 +9,8 @@ namespace Heartache.Chunk
     class Audo : Chunk
     {
         List<byte[]> audioList = new List<byte[]>();
+        const string TAG = "AUDO";
+        const string INDEX_FILENAME = "index.txt";
 
         class Data
         {
@@ -51,22 +53,48 @@ namespace Heartache.Chunk
             }
 
             string audioIndexJson = JsonConvert.SerializeObject(_data, Formatting.Indented);
-            fileSystem.WriteText(System.IO.Path.Combine(exportPath, "index.txt"), audioIndexJson);
+            fileSystem.WriteText(System.IO.Path.Combine(exportPath, INDEX_FILENAME), audioIndexJson);
         }
-
+    
         public override string GetFolder(string rootPath)
         {
-            return System.IO.Path.Combine(rootPath, "AUDO");
+            return System.IO.Path.Combine(rootPath, TAG);
         }
 
         public override void Import(IFile fileSystem, string rootPath)
         {
-            throw new NotImplementedException();
+            string importPath = GetFolder(rootPath);
+            string indexFilePath = System.IO.Path.Combine(importPath, INDEX_FILENAME);
+            string indexString = fileSystem.ReadText(indexFilePath);
+            _data = JsonConvert.DeserializeObject<Data>(indexString);
+
+            foreach(var filename in _data.audioFileNameList)
+            {
+                string audioPath = System.IO.Path.Combine(importPath, filename);
+                audioList.Add(fileSystem.ReadBinary(audioPath));
+            }
         }
 
         public override void WriteBinary(BinaryWriter writer)
         {
-            throw new NotImplementedException();
+            int chunkSize = 4 + 4 + 4 * audioList.Count + audioList.Sum(a => a.Length);
+
+            writer.Write(TAG);
+            writer.Write(chunkSize);
+
+            int audioStartingPosition = (int)writer.BaseStream.Position + 4 * audioList.Count;
+
+            writer.Write(audioStartingPosition);
+            for(int i = 1; i < audioList.Count; i++)
+            {
+                audioStartingPosition += audioList[i - 1].Length;
+                writer.Write(audioStartingPosition);
+            }
+
+            foreach(var audio in audioList)
+            {
+                writer.Write(audio);
+            }
         }
     }
 }

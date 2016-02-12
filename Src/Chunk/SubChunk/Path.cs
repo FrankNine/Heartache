@@ -1,10 +1,12 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 
 namespace Heartache.Chunk
 {
     class Path : Chunk
     {
+        const string TAG = "PATH";
+        const string FILENAME = "0";
+
         int chunkSize = 0;
         byte[] content = null;
 
@@ -15,26 +17,24 @@ namespace Heartache.Chunk
 
         public override void Export(IFile fileSystem, string rootPath)
         {
-            string exportPath = GetFolder(rootPath);
-            fileSystem.CreateDirectoryWithoutReadOnly(exportPath);
-            fileSystem.WriteBinary(System.IO.Path.Combine(exportPath, "0"), content);
+            string exportFolder = GetFolder(rootPath);
+            ChunkOperator.ExportChunkAsAWhole(fileSystem, exportFolder, FILENAME, content);
         }
 
         public override string GetFolder(string rootPath)
         {
-            return System.IO.Path.Combine(rootPath, "PATH");
+            return System.IO.Path.Combine(rootPath, TAG);
         }
 
         public override void Import(IFile fileSystem, string rootPath)
         {
-            throw new NotImplementedException();
+            string importFolder = GetFolder(rootPath);
+            ChunkOperator.ImportChunkAsAWhole(fileSystem, importFolder, FILENAME, ref content);
         }
-
-    
 
         public override void WriteBinary(BinaryWriter writer)
         {
-            throw new NotImplementedException();
+            ChunkOperator.WriteChunkAsAWhole(writer, TAG, content);
         }
     }
 }

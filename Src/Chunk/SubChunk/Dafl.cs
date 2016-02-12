@@ -5,9 +5,12 @@ namespace Heartache.Chunk
 {
     class Dafl : Chunk
     {
+        const string TAG = "DAFL";
+        const string FILENAME = "0";
+
         int chunkSize = 0;
         byte[] content = null;
-        
+
         public override void ParseBinary(BinaryReader reader)
         {
             ChunkOperator.DumpChunkAsAWhole(reader, ref chunkSize, ref content);
@@ -15,26 +18,24 @@ namespace Heartache.Chunk
 
         public override void Export(IFile fileSystem, string rootPath)
         {
-            string exportPath = GetFolder(rootPath);
-            fileSystem.CreateDirectoryWithoutReadOnly(exportPath);
-            fileSystem.WriteBinary(System.IO.Path.Combine(exportPath, "0"), content);
+            string exportFolder = GetFolder(rootPath);
+            ChunkOperator.ExportChunkAsAWhole(fileSystem, exportFolder, FILENAME, content);
         }
 
         public override string GetFolder(string rootPath)
         {
-            return System.IO.Path.Combine(rootPath, "DAFL");
+            return System.IO.Path.Combine(rootPath, TAG);
         }
 
         public override void Import(IFile fileSystem, string rootPath)
         {
-            throw new NotImplementedException();
+            string importFolder = GetFolder(rootPath);
+            ChunkOperator.ImportChunkAsAWhole(fileSystem, importFolder, FILENAME, ref content);
         }
-
-        
 
         public override void WriteBinary(BinaryWriter writer)
         {
-            throw new NotImplementedException();
+            ChunkOperator.WriteChunkAsAWhole(writer, TAG, content);
         }
     }
 }

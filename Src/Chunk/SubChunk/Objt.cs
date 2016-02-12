@@ -1,11 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 
 namespace Heartache.Chunk
 {
     class Objt : Chunk
     {
+        const string TAG = "OBJT";
+        const string INDEX_FILENAME = "index.txt";
+
         int chunkSize;
         List<NamedElement> elementList = new List<NamedElement>();
 
@@ -16,29 +18,22 @@ namespace Heartache.Chunk
 
         public override void Export(IFile fileSystem, string rootPath)
         {
-            string exportPath = GetFolder(rootPath);
-            fileSystem.CreateDirectoryWithoutReadOnly(exportPath);
-            for (int i = 0; i < elementList.Count; i++)
-            {
-                fileSystem.WriteText(System.IO.Path.Combine(exportPath, i.ToString()), elementList[i].ToString());
-            }
+            ChunkOperator.ExportSingleNamedArray(fileSystem, GetFolder(rootPath), INDEX_FILENAME, elementList);
         }
 
         public override string GetFolder(string rootPath)
         {
-            return System.IO.Path.Combine(rootPath, "OBJT");
+            return System.IO.Path.Combine(rootPath, TAG);
         }
 
         public override void Import(IFile fileSystem, string rootPath)
         {
-            throw new NotImplementedException();
+            ChunkOperator.ImportSingleNamedArray(fileSystem, GetFolder(rootPath), INDEX_FILENAME, elementList);
         }
-
-        
 
         public override void WriteBinary(BinaryWriter writer)
         {
-            throw new NotImplementedException();
+            ChunkOperator.WriteSingleNamedArray(writer, TAG, elementList);
         }
     }
 }
