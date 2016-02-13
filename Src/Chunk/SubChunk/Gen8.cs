@@ -2,6 +2,7 @@
 
 using Heartache.Primitive;
 using Newtonsoft.Json;
+using System.Text;
 
 namespace Heartache.Chunk
 {
@@ -58,15 +59,15 @@ namespace Heartache.Chunk
             int chunkSize = BinaryStreamOperator.ReadSize(reader);
 
             _data.unknown1 = BinaryStreamOperator.ReadBinary(reader, 4);
-            _data.string1.position = BinaryStreamOperator.ReadPosition(reader);
-            _data.string2.position = BinaryStreamOperator.ReadPosition(reader);
+            _data.string1.position = (uint)BinaryStreamOperator.ReadPosition(reader);
+            _data.string2.position = (uint)BinaryStreamOperator.ReadPosition(reader);
             _data.unknown2 = BinaryStreamOperator.ReadBinary(reader, 28);
-            _data.string3.position = BinaryStreamOperator.ReadPosition(reader);
+            _data.string3.position = (uint)BinaryStreamOperator.ReadPosition(reader);
             _data.unknown3 = BinaryStreamOperator.ReadBinary(reader, 16);
             _data.width = BinaryStreamOperator.ReadSize(reader);
             _data.height = BinaryStreamOperator.ReadSize(reader);
             _data.unknown4 = BinaryStreamOperator.ReadBinary(reader, 32);
-            _data.string4.position = BinaryStreamOperator.ReadSize(reader);
+            _data.string4.position = (uint)BinaryStreamOperator.ReadSize(reader);
             _data.unknown5 = BinaryStreamOperator.ReadBinary(reader, chunkSize - 104); 
         }
 
@@ -90,7 +91,7 @@ namespace Heartache.Chunk
 
         public override string GetFolder(string rootPath)
         {
-            return System.IO.Path.Combine(rootPath, "GEN8");
+            return System.IO.Path.Combine(rootPath, TAG);
         }
 
         public override void Import(IFile fileSystem, string rootPath)
@@ -105,15 +106,16 @@ namespace Heartache.Chunk
 
         public override void WriteBinary(BinaryWriter writer)
         {
-            writer.Write(TAG);
+            writer.Write(Encoding.ASCII.GetBytes(TAG));
             writer.Write(_data.GetSize());
             writer.Write(_data.unknown1);
             writer.Write(_data.string1.position);
             writer.Write(_data.string2.position);
             writer.Write(_data.unknown2);
             writer.Write(_data.string3.position);
-            writer.Write(_data.height);
+            writer.Write(_data.unknown3);
             writer.Write(_data.width);
+            writer.Write(_data.height);
             writer.Write(_data.unknown4);
             writer.Write(_data.string4.position);
             writer.Write(_data.unknown5);

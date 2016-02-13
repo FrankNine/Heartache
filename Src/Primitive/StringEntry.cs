@@ -3,12 +3,17 @@
     class StringEntry
     {
         public int index;
-        public int position;
+        public uint position;
         public string content;
 
-        public static int GetSzie()
+        public int GetSize()
         {
-            return sizeof(int);
+            return 4 + content.Length;
+        }
+
+        public static int GetStringPointerSize()
+        {
+            return 4;
         }
     }
 }

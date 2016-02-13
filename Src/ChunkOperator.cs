@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
-
+using System.Collections.Generic;
 
 using Newtonsoft.Json;
-
+using System.Text;
 
 namespace Heartache
 {
@@ -34,7 +33,7 @@ namespace Heartache
         public static void DumpChunkAsAWhole(BinaryReader reader, ref int chunkSize, ref byte[] content)
         {
             chunkSize = BinaryStreamOperator.ReadSize(reader);
-            if (chunkSize == 0) { return; }
+            if (chunkSize == 0) { content = new byte[0]; return; }
             content = BinaryStreamOperator.ReadBinary(reader, chunkSize);
         }
 
@@ -53,7 +52,7 @@ namespace Heartache
 
         public static void WriteChunkAsAWhole(BinaryWriter writer, string tag, byte[] content)
         {
-            writer.Write(tag);
+            writer.Write(Encoding.ASCII.GetBytes(tag));
             writer.Write(content.Length);
             writer.Write(content);
         }
@@ -103,7 +102,7 @@ namespace Heartache
             {
                 string filename = Path.Combine(folderPath, i.ToString());
                 fileSystem.WriteBinary(filename, elementList[i].content);
-                filenameList.Add(new NamedElementFilename { nameStringPosition = elementList[i].nameStringPosition, filename = filename});
+                filenameList.Add(new NamedElementFilename { nameStringPosition = elementList[i].nameStringPosition, filename = filename });
             }
 
             string indexFullPath = Path.Combine(folderPath, indexFilename);
@@ -123,14 +122,18 @@ namespace Heartache
             foreach (var namedElementFilename in namedElementFilenameList)
             {
                 string filePath = Path.Combine(folderPath, namedElementFilename.filename);
-                elementList.Add(new NamedElement { nameStringPosition = namedElementFilename.nameStringPosition
-                                                  ,content = fileSystem.ReadBinary(filePath) });
+                elementList.Add(new NamedElement
+                {
+                    nameStringPosition = namedElementFilename.nameStringPosition
+                                                  ,
+                    content = fileSystem.ReadBinary(filePath)
+                });
             }
         }
 
         public static void WriteSingleNamedArray(BinaryWriter writer, string tag, List<NamedElement> elementList)
         {
-            writer.Write(tag);
+            writer.Write(Encoding.ASCII.GetBytes(tag));
 
             int elementCount = elementList.Count;
             int chunkSize = elementCount * 4 + elementCount * 4 + elementList.Sum(e => e.content.Length);
@@ -139,57 +142,23 @@ namespace Heartache
             int contentStartingPosition = (int)writer.BaseStream.Position + 4 * elementList.Count;
             int currentContentPosition = contentStartingPosition;
 
-            foreach(var element in elementList)
+            foreach (var element in elementList)
             {
                 writer.Write(currentContentPosition);
                 currentContentPosition += (4 + element.content.Length);
             }
 
-            foreach(var element in elementList)
+            foreach (var element in elementList)
             {
                 writer.Write(element.nameStringPosition);
                 writer.Write(element.content);
             }
         }
 
-        public static void DumpDoubleNamedArray(BinaryReader reader, List<DoubleNamedElement> elementList)
-        {
-            int chunkSize = BinaryStreamOperator.ReadSize(reader);
-            if (chunkSize == 0) { return; }
 
-            long chunkStartingPosition = reader.BaseStream.Position;
-
-            int elementCount = BinaryStreamOperator.ReadSize(reader);
-            int[] elementPositions = new int[elementCount];
-
-            for (int i = 0; i < elementCount; i++)
-            {
-                elementPositions[i] = BinaryStreamOperator.ReadPosition(reader);
-            }
-
-            for (int i = 0; i < elementCount; i++)
-            {
-                int elementPosition = elementPositions[i];
-
-                reader.BaseStream.Seek(elementPosition, SeekOrigin.Begin);
-                int firstElementNamePosition = BinaryStreamOperator.ReadPosition(reader);
-                int secondElementNamePosition = BinaryStreamOperator.ReadPosition(reader);
-                long elementDataStartPosition = reader.BaseStream.Position;
-                long elementDataLength = (((i != elementCount - 1) ? elementPositions[i + 1] : (chunkSize + chunkStartingPosition)) - elementPositions[i]) - 8;
-
-                reader.BaseStream.Seek(elementDataStartPosition, SeekOrigin.Begin);
-                byte[] elementData = BinaryStreamOperator.ReadBinary(reader, (int)elementDataLength);
-
-                elementList.Add(new DoubleNamedElement
-                {
-                    firstNameStringPosition = firstElementNamePosition,
-                    SecondNameStringPosition = secondElementNamePosition,
-                    content = elementData
-                });
-            }
-        }
-
-       public static void DumpSingleNamedFixedSize( BinaryReader reader, int elementSize, List<byte[]> elementList)
+        public static void DumpSingleNamedFixedSize(BinaryReader reader, 
+                                                    int elementSize, 
+                                                    List<NamedElement> elementList)
         {
             int chunkSize = BinaryStreamOperator.ReadSize(reader);
             if (chunkSize == 0) { return; }
@@ -203,8 +172,32 @@ namespace Heartache
                 reader.BaseStream.Seek(elementDataStartPosition, SeekOrigin.Begin);
                 byte[] content = BinaryStreamOperator.ReadBinary(reader, elementSize);
 
-                elementList.Add(content);
+                elementList.Add(new NamedElement { nameStringPosition = elementNamePosition,
+                                                   content = content});
             }
+        }
+
+        public static void ExportSingleNamedFixedSize(IFile fileSystem,
+                                                      string folderPath,
+                                                      string indexFilename,
+                                                      List<NamedElement> elementList)
+        {
+            ExportSingleNamedArray(fileSystem, folderPath, indexFilename, elementList);
+        }
+
+        public static void ImportSingleNamedFixedSize(IFile fileSystem,
+                                                      string folderPath,
+                                                      string indexFilename,
+                                                      List<NamedElement> elementList)
+        {
+            ImportSingleNamedArray(fileSystem, folderPath, indexFilename, elementList);
+        }
+
+        public static void WriteSingleNamedFixedSize(BinaryWriter writer, 
+                                                     string tag, 
+                                                     List<NamedElement> elementList)
+        {
+            WriteSingleNamedArray(writer, tag, elementList);
         }
     }
 }

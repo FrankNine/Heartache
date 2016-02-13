@@ -12,6 +12,7 @@ namespace Heartache
         [STAThread]
         static void Main(string[] args)
         {
+            Disassemble();
             Reassemble();
         }
 
@@ -35,8 +36,6 @@ namespace Heartache
             form.Export(new FileIO(), outputPath);
 
             reader.Dispose();
-            Console.WriteLine("Press enter to close...");
-            Console.ReadLine();
         }
 
         static void Reassemble()
@@ -45,9 +44,6 @@ namespace Heartache
             BinaryWriter writer = FileIO.GetDataWinBinaryWriter();
             form.WriteBinary(writer);
             writer.Dispose();
-
-            Console.WriteLine("Press enter to close...");
-            Console.ReadLine();
         }
     }
 }

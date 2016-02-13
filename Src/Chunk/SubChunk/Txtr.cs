@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 
@@ -8,6 +8,8 @@ namespace Heartache.Chunk
 {
     class Txtr : Chunk
     {
+        const string TAG = "TXTR";
+        const string INDEX_FILENAME = "index.txt";
         List<byte[]> elementList = new List<byte[]>();
 
         class Data
@@ -65,23 +67,51 @@ namespace Heartache.Chunk
             }
 
             string indexJson = JsonConvert.SerializeObject(_data, Formatting.Indented);
-            fileSystem.WriteText(System.IO.Path.Combine(exportPath, "index.txt"), indexJson);
+            fileSystem.WriteText(System.IO.Path.Combine(exportPath, INDEX_FILENAME), indexJson);
         }
 
         public override string GetFolder(string rootPath)
         {
-            return System.IO.Path.Combine(rootPath, "TXTR");
+            return System.IO.Path.Combine(rootPath, TAG);
         }
 
         public override void Import(IFile fileSystem, string rootPath)
         {
-            throw new NotImplementedException();
+            string folderPath = GetFolder(rootPath);
+            string indexFullPath = System.IO.Path.Combine(folderPath, INDEX_FILENAME);
+            string jsonContent = fileSystem.ReadText(indexFullPath);
+            _data = JsonConvert.DeserializeObject<Data>(jsonContent);
+
+            foreach(var textureFilename in _data.exportedImageNameList)
+            {
+                elementList.Add(fileSystem.ReadBinary(System.IO.Path.Combine(folderPath, textureFilename)));
+            }
         }
 
 
         public override void WriteBinary(BinaryWriter writer)
         {
-            throw new NotImplementedException();
+            writer.Write(TAG);
+            int textureCount = elementList.Count;
+            int chunkSize = 4 + 4 * textureCount + elementList.Sum(s => s.Length);
+
+            writer.Write(chunkSize);
+            writer.Write(textureCount);
+
+            int startingPosition = (int)writer.BaseStream.Position + 4 * textureCount;
+            int currentPosition = startingPosition;
+
+            writer.Write(currentPosition);
+            for (int i = 1; i < textureCount; i++)
+            {
+                currentPosition += elementList[i - 1].Length;
+                writer.Write(currentPosition);
+            }
+
+            foreach (var element in elementList)
+            {
+                writer.Write(element);
+            }
         }
     }
 }

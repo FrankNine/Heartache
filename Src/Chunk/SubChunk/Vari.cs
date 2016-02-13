@@ -6,7 +6,10 @@ namespace Heartache.Chunk
 {
     class Vari : Chunk
     {
-        List<byte[]> elementList = new List<byte[]>();
+        const string TAG = "VARI";
+        const string INDEX_FILENAME = "index.txt";
+
+        List<NamedElement> elementList = new List<NamedElement>();
 
         public override void ParseBinary(BinaryReader reader)
         {
@@ -15,27 +18,24 @@ namespace Heartache.Chunk
 
         public override void Export(IFile fileSystem, string rootPath)
         {
-            string exportPath = GetFolder(rootPath);
-            fileSystem.CreateDirectoryWithoutReadOnly(exportPath);
-            for (int i = 0; i < elementList.Count; i++)
-            {
-                fileSystem.WriteText(System.IO.Path.Combine(exportPath, i.ToString()), elementList[i].ToString());
-            }
+            string folderPath = GetFolder(rootPath);
+            ChunkOperator.ExportSingleNamedFixedSize(fileSystem, folderPath, INDEX_FILENAME, elementList);
         }
 
         public override string GetFolder(string rootPath)
         {
-            return System.IO.Path.Combine(rootPath, "VARI");
+            return System.IO.Path.Combine(rootPath, TAG);
         }
 
         public override void Import(IFile fileSystem, string rootPath)
         {
-            throw new NotImplementedException();
+            string folderPath = GetFolder(rootPath);
+            ChunkOperator.ImportSingleNamedFixedSize(fileSystem, folderPath, INDEX_FILENAME, elementList);
         }
 
         public override void WriteBinary(BinaryWriter writer)
         {
-            throw new NotImplementedException();
+            ChunkOperator.WriteSingleNamedFixedSize(writer, TAG, elementList);
         }
     }
 }

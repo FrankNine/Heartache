@@ -27,17 +27,17 @@ namespace Heartache.Chunk
         {
             public StringEntry fontName = new StringEntry();
             public StringEntry fontFilename = new StringEntry();
-            int fontSize;
-            public byte[] unknown;
+            public int _fontSize;
+            public byte[] _unknown;
 
             public List<Glyph> glyphList = new List<Glyph>();
 
             public void ReadBinary(BinaryReader reader)
             {
-                int firstElementNamePosition = BinaryStreamOperator.ReadPosition(reader);
-                int secondElementNamePosition = BinaryStreamOperator.ReadPosition(reader);
-                int fontSize = BinaryStreamOperator.ReadSize(reader);
-                byte[] unknownSector = BinaryStreamOperator.ReadBinary(reader, 28);
+                fontName.position = (uint)BinaryStreamOperator.ReadPosition(reader);
+                fontFilename.position = (uint)BinaryStreamOperator.ReadPosition(reader);
+                _fontSize = BinaryStreamOperator.ReadSize(reader);
+                _unknown = BinaryStreamOperator.ReadBinary(reader, 28);
                 int glyphCount = BinaryStreamOperator.ReadSize(reader);
 
                 int[] glyphPosition = new int[glyphCount];
@@ -57,10 +57,10 @@ namespace Heartache.Chunk
 
             public int GetSize()
             {
-                return StringEntry.GetSzie() +              // fontName
-                       StringEntry.GetSzie() +              // fontFileName
+                return StringEntry.GetStringPointerSize() + // fontName
+                       StringEntry.GetStringPointerSize() + // fontFileName
                        sizeof(Int32) +                      // fontSize
-                       unknown.Length +                     // Unknown Sector
+                       _unknown.Length +                    // Unknown Sector
                        sizeof(Int32) +                      // Glyph Count
                        Glyph.GetSize() * glyphList.Count;   // Glyph
             }
@@ -69,8 +69,8 @@ namespace Heartache.Chunk
             {
                 writer.Write(fontName.position);
                 writer.Write(fontFilename.position);
-                writer.Write(fontSize);
-                writer.Write(unknown);
+                writer.Write(_fontSize);
+                writer.Write(_unknown);
                 writer.Write(glyphList.Count);
 
                 int currentPosition = (int)writer.BaseStream.Position;

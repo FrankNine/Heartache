@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 
 namespace Heartache.Chunk
 {
@@ -132,7 +133,31 @@ namespace Heartache.Chunk
 
         public override void WriteBinary(BinaryWriter writer)
         {
-            throw new NotImplementedException();
+            writer.Write(Encoding.ASCII.GetBytes("FORM"));
+            writer.Write(57056094);
+
+            gen8.WriteBinary(writer);
+            optn.WriteBinary(writer);
+            extn.WriteBinary(writer);
+            sond.WriteBinary(writer);
+            agrp.WriteBinary(writer);
+            sprt.WriteBinary(writer);
+            bgnd.WriteBinary(writer);
+            path.WriteBinary(writer);
+            scpt.WriteBinary(writer);
+            shdr.WriteBinary(writer);
+            font.WriteBinary(writer);
+            tmln.WriteBinary(writer);
+            objt.WriteBinary(writer);
+            room.WriteBinary(writer);
+            dafl.WriteBinary(writer);
+            tpag.WriteBinary(writer);
+            code.WriteBinary(writer);
+            vari.WriteBinary(writer);
+            func.WriteBinary(writer);
+            strg.WriteBinary(writer);
+            txtr.WriteBinary(writer);
+            audo.WriteBinary(writer);
         }
     }
 }

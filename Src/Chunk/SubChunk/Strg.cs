@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 using Newtonsoft.Json;
 
@@ -10,6 +11,9 @@ namespace Heartache.Chunk
 {
     class Strg : Chunk
     {
+        const string TAG = "STRG";
+        const string INDEX_FILENAME = "Strg.txt";
+
         class Data
         {
             public List<StringEntry> stringList = new List<StringEntry>();
@@ -26,21 +30,21 @@ namespace Heartache.Chunk
 
             int elementCount = BinaryStreamOperator.ReadSize(reader);
 
-            int[] elementPositions = new int[elementCount];
+            uint[] elementPositions = new uint[elementCount];
 
             for (int i = 0; i < elementCount; i++)
             {
-                elementPositions[i] = BinaryStreamOperator.ReadPosition(reader);
+                elementPositions[i] = (uint)BinaryStreamOperator.ReadPosition(reader);
             }
 
             for (int i = 0; i < elementCount; i++)
             {
-                int elementPosition = elementPositions[i];
+                uint elementPosition = elementPositions[i];
                 reader.BaseStream.Seek(elementPosition, SeekOrigin.Begin);
                 _data.stringList.Add(new StringEntry
                 {
                     index = i,
-                    position = elementPosition,
+                    position = elementPosition + 4,
                     content = BinaryStreamOperator.ReadPascalString(reader)
                 });
             }
@@ -50,7 +54,7 @@ namespace Heartache.Chunk
 
         public StringEntry LookUpStringEntryByPosition(long position)
         {
-            return _data.stringList.Find(se => se.position + 4 == position);
+            return _data.stringList.Find(se => se.position == position);
         }
 
         public override void Export(IFile fileSystem, string rootPath)
@@ -58,24 +62,46 @@ namespace Heartache.Chunk
             string exportPath = GetFolder(rootPath);
             fileSystem.CreateDirectoryWithoutReadOnly(exportPath);
             string serializedString = JsonConvert.SerializeObject(_data, Formatting.Indented);
-            fileSystem.WriteText(System.IO.Path.Combine(exportPath, "Strg.txt"), serializedString);
+            fileSystem.WriteText(System.IO.Path.Combine(exportPath, INDEX_FILENAME), serializedString);
         }
 
         public override string GetFolder(string rootPath)
         {
-            return System.IO.Path.Combine(rootPath, "STRG");
+            return System.IO.Path.Combine(rootPath, TAG);
         }
 
         public override void Import(IFile fileSystem, string rootPath)
         {
-            throw new NotImplementedException();
+            string folderPath = GetFolder(rootPath);
+            string indexFullPath = System.IO.Path.Combine(folderPath, INDEX_FILENAME);
+            string jsonContent = fileSystem.ReadText(indexFullPath);
+            _data = JsonConvert.DeserializeObject<Data>(jsonContent);
         }
-
-
 
         public override void WriteBinary(BinaryWriter writer)
         {
-            throw new NotImplementedException();
+            writer.Write(TAG);
+            int stringCount = _data.stringList.Count;
+            int chunkSize = 4 + 4 * stringCount + _data.stringList.Sum(s => s.GetSize());
+
+            writer.Write(chunkSize);
+            writer.Write(stringCount);
+
+            int startingPosition = (int)writer.BaseStream.Position + 4 * stringCount;
+            int currentPosition = startingPosition;
+
+            writer.Write(currentPosition);
+            for (int i = 1; i < stringCount; i++)
+            {
+                currentPosition += _data.stringList[i - 1].GetSize();
+                writer.Write(currentPosition);
+            }
+
+            foreach (var strg in _data.stringList)
+            {
+                writer.Write(strg.content.Length);
+                writer.Write(strg.content);
+            }
         }
     }
 }

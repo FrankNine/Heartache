@@ -80,7 +80,7 @@ namespace Heartache
         {
             if (dataTodump == null) { return; }
 
-            FileStream file = File.Create(fileName, dataTodump.Length);
+            FileStream file = File.Create(fileName);
             file.Write(dataTodump, offset: 0, count: dataTodump.Length);
             file.Close();
         }
