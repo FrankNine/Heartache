@@ -84,6 +84,12 @@ namespace Heartache.Chunk
             _data.elementList16.ForEach(e => e.name = stringChunk.LookUpStringEntryByPosition(e.name.position));
         }
 
+        public void ResolveStringPosition(Strg stringChunk)
+        {
+            _data.elementList12.ForEach(e => e.name = stringChunk.GetAdjustedStringPositionByIndex(e.name.index));
+            _data.elementList16.ForEach(e => e.name = stringChunk.GetAdjustedStringPositionByIndex(e.name.index));
+        }
+
         public override string GetFolder(string rootPath)
         {
             return System.IO.Path.Combine(rootPath, TAG);

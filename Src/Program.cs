@@ -12,8 +12,8 @@ namespace Heartache
         [STAThread]
         static void Main(string[] args)
         {
-            Disassemble();
-            //Reassemble();
+            //Disassemble();
+            Reassemble();
         }
 
         static void Disassemble()
@@ -41,6 +41,7 @@ namespace Heartache
         static void Reassemble()
         {
             form.Import(new FileIO(), FileIO.GetDumpFolderPath());
+            form.RewriteStrings();
             BinaryWriter writer = FileIO.GetDataWinBinaryWriter();
             form.WriteBinary(writer);
             writer.Dispose();

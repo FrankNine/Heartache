@@ -1,12 +1,11 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
+using System.Text;
 using System.Linq;
+using System.Collections.Generic;
 
 using Newtonsoft.Json;
 
 using Heartache.Primitive;
-using System.Text;
-using System;
 
 namespace Heartache.Chunk
 {
@@ -45,7 +44,7 @@ namespace Heartache.Chunk
                 _data.stringList.Add(new StringEntry
                 {
                     index = i,
-                    position = elementPosition + 4,
+                    position = elementPosition,
                     content = BinaryStreamOperator.ReadPascalString(reader)
                 });
             }
@@ -53,9 +52,25 @@ namespace Heartache.Chunk
             reader.BaseStream.Seek(chunkStartingPosition + chunkSize, SeekOrigin.Begin);
         }
 
-        public StringEntry LookUpStringEntryByPosition(long position)
+        public StringEntry LookUpStringEntryByPosition(int position)
         {
-            return _data.stringList.Find(se => se.position == position);
+            return _data.stringList.Find(se => (se.position + 4) == position);
+        }
+
+        private StringEntry LookUpStringEntryByIndex(int index)
+        {
+            return _data.stringList.Find(se => se.index == index);
+        }
+
+        public StringEntry GetAdjustedStringPositionByIndex(int index)
+        {
+            var match = LookUpStringEntryByIndex(index);
+            return new StringEntry
+            {
+                index = match.index,
+                content = match.content,
+                position = match.position + 4
+            };
         }
 
         public override void Export(IFile fileSystem, string rootPath)
@@ -71,6 +86,22 @@ namespace Heartache.Chunk
             return System.IO.Path.Combine(rootPath, TAG);
         }
 
+        public void RewriteAllStringPosition(int strgStartingPosition)
+        {
+            int stringCount = _data.stringList.Count;
+            _data.stringList.First().position =
+                strgStartingPosition +
+                4 + // Tag
+                4 + // Chunk Size
+                4 + // String Count
+                4 * stringCount;
+
+            for (int i = 1; i < stringCount; i++)
+            {
+                _data.stringList[i].position = _data.stringList[i - 1].position + _data.stringList[i - 1].GetSize();
+            }
+        }
+
         public override void Import(IFile fileSystem, string rootPath)
         {
             string folderPath = GetFolder(rootPath);
@@ -78,6 +109,7 @@ namespace Heartache.Chunk
             string jsonContent = fileSystem.ReadText(indexFullPath);
             _data = JsonConvert.DeserializeObject<Data>(jsonContent);
         }
+
 
         public override void WriteBinary(BinaryWriter writer)
         {

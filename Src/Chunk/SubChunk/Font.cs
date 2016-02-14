@@ -162,6 +162,15 @@ namespace Heartache.Chunk
             }
         }
 
+        public void ResolveStringPosition(Strg stringChunk)
+        {
+            foreach (FontElement font in _data.fontElementList)
+            {
+                font.fontName = stringChunk.GetAdjustedStringPositionByIndex(font.fontName.index);
+                font.fontFilename = stringChunk.GetAdjustedStringPositionByIndex(font.fontFilename.index);
+            }
+        }
+
         public override void Export(IFile fileSystem, string rootPath)
         {
             string exportPath = GetFolder(rootPath);

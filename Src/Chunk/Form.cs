@@ -124,6 +124,26 @@ namespace Heartache.Chunk
             _allSubChunk.ForEach(c => c.Import(fileSystem, rootPath));
         }
 
+        public void RewriteStrings()
+        {
+            int strgChunkPosition =
+                4 + // FORM Tag 
+                4 + // FORM Size
+                _allSubChunk.TakeWhile(c => c != strg).Sum(c => c.GetChunkFullSize());
+            strg.RewriteAllStringPosition(strgChunkPosition);
+            _ResolveStringPosition();
+        }
+
+        void _ResolveStringPosition()
+        {
+            gen8.ResolveStringPosition(strg);
+            font.ResolveStringPosition(strg);
+            func.ResolveStringPosition(strg);
+            objt.ResolveStringPosition(strg);
+            room.ResolveStringPosition(strg);
+            sprt.ResolveStringPosition(strg);
+        }
+
         public override void WriteBinary(BinaryWriter writer)
         {
             BinaryStreamOperator.WriteTag(writer, TAG);
