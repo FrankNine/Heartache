@@ -136,8 +136,9 @@ namespace Heartache
             writer.Write(Encoding.ASCII.GetBytes(tag));
 
             int elementCount = elementList.Count;
-            int chunkSize = elementCount * 4 + elementCount * 4 + elementList.Sum(e => e.content.Length);
+            int chunkSize = 4 + elementCount * 4 + elementCount * 4 + elementList.Sum(e => e.content.Length);
             writer.Write(chunkSize);
+            writer.Write(elementCount);
 
             int contentStartingPosition = (int)writer.BaseStream.Position + 4 * elementList.Count;
             int currentContentPosition = contentStartingPosition;
@@ -167,9 +168,6 @@ namespace Heartache
             for (int i = 0; i < elementCount; i++)
             {
                 int elementNamePosition = BinaryStreamOperator.ReadPosition(reader);
-                long elementDataStartPosition = reader.BaseStream.Position;
-
-                reader.BaseStream.Seek(elementDataStartPosition, SeekOrigin.Begin);
                 byte[] content = BinaryStreamOperator.ReadBinary(reader, elementSize);
 
                 elementList.Add(new NamedElement { nameStringPosition = elementNamePosition,
@@ -197,7 +195,11 @@ namespace Heartache
                                                      string tag, 
                                                      List<NamedElement> elementList)
         {
-            WriteSingleNamedArray(writer, tag, elementList);
+            BinaryStreamOperator.WriteTag(writer, tag);
+            writer.Write(elementList.Count);
+
+            int fixedSize = 4 + elementList[0].content.Length;
+
         }
     }
 }

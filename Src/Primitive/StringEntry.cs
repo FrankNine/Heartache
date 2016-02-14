@@ -8,7 +8,7 @@
 
         public int GetSize()
         {
-            return 4 + content.Length;
+            return 4 + content.Length + 1;
         }
 
         public static int GetStringPointerSize()

@@ -9,17 +9,17 @@ namespace Heartache.Chunk
 {
     class Font : Chunk
     {
+        const string TAG = "FONT";
         const string INDEX_FILE_NAME = "Index.txt";
-
-        List<DoubleNamedElement> elementList = new List<DoubleNamedElement>();
 
         class Data
         {
             public List<FontElement> fontElementList = new List<FontElement>();
+            public byte[] unknown;
 
             public int GetSize()
             {
-                return sizeof(Int32) + fontElementList.AsEnumerable().Sum(f => f.GetSize());
+                return 4 + 4 * fontElementList.Count + fontElementList.Sum(f => f.GetSize()) + unknown.Length;
             }
         }
 
@@ -62,6 +62,7 @@ namespace Heartache.Chunk
                        sizeof(Int32) +                      // fontSize
                        _unknown.Length +                    // Unknown Sector
                        sizeof(Int32) +                      // Glyph Count
+                       sizeof(Int32) * glyphList.Count +    // Glyph Pointer
                        Glyph.GetSize() * glyphList.Count;   // Glyph
             }
 
@@ -129,7 +130,7 @@ namespace Heartache.Chunk
             int chunkSize = BinaryStreamOperator.ReadSize(reader);
             if (chunkSize == 0) { return; }
 
-            long chunkStartingPosition = reader.BaseStream.Position;
+            int chunkStartingPosition = (int)reader.BaseStream.Position;
 
             int elementCount = BinaryStreamOperator.ReadSize(reader);
             int[] elementPositions = new int[elementCount];
@@ -148,6 +149,8 @@ namespace Heartache.Chunk
                 fontElement.ReadBinary(reader);
                 _data.fontElementList.Add(fontElement);
             }
+
+            _data.unknown = BinaryStreamOperator.ReadBinary(reader, chunkStartingPosition + chunkSize - (int)reader.BaseStream.Position);
         }
 
         public void ResolveString(Strg stringChunk)
@@ -171,7 +174,7 @@ namespace Heartache.Chunk
 
         public override string GetFolder(string rootPath)
         {
-            return System.IO.Path.Combine(rootPath, "FONT");
+            return System.IO.Path.Combine(rootPath, TAG);
         }
 
         public override void Import(IFile fileSystem, string rootPath)
@@ -185,13 +188,13 @@ namespace Heartache.Chunk
 
         public override void WriteBinary(BinaryWriter writer)
         {
-            writer.Write("FONT");
+            BinaryStreamOperator.WriteTag(writer, TAG);
 
-            long chunkSizeLocation = writer.BaseStream.Position;
             writer.Write(_data.GetSize());
+            writer.Write(_data.fontElementList.Count);
 
             int currentPosition = (int)writer.BaseStream.Position;
-            currentPosition += sizeof(Int32) * elementList.Count;
+            currentPosition += sizeof(Int32) * _data.fontElementList.Count;
 
             _data.fontElementList.ForEach(f =>
             {
@@ -200,6 +203,8 @@ namespace Heartache.Chunk
             });
 
             _data.fontElementList.ForEach(f => f.WriteBinary(writer));
+
+            writer.Write(_data.unknown);
         }
     }
 }

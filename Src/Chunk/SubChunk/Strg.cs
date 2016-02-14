@@ -6,6 +6,7 @@ using System.Linq;
 using Newtonsoft.Json;
 
 using Heartache.Primitive;
+using System.Text;
 
 namespace Heartache.Chunk
 {
@@ -80,9 +81,9 @@ namespace Heartache.Chunk
 
         public override void WriteBinary(BinaryWriter writer)
         {
-            writer.Write(TAG);
+            BinaryStreamOperator.WriteTag(writer, TAG);
             int stringCount = _data.stringList.Count;
-            int chunkSize = 4 + 4 * stringCount + _data.stringList.Sum(s => s.GetSize());
+            int chunkSize = 4 + 4 * stringCount + _data.stringList.Sum(s => s.GetSize()) +82;
 
             writer.Write(chunkSize);
             writer.Write(stringCount);
@@ -100,7 +101,14 @@ namespace Heartache.Chunk
             foreach (var strg in _data.stringList)
             {
                 writer.Write(strg.content.Length);
-                writer.Write(strg.content);
+                writer.Write(Encoding.ASCII.GetBytes(strg.content));
+                writer.Write('\0');
+            }
+
+            // Padding?
+            for (int i = 0; i < 82; i++)
+            {
+                writer.Write('\0');
             }
         }
     }

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using System.Diagnostics;
+using System.Text;
 
 namespace Heartache
 {
@@ -83,5 +83,10 @@ namespace Heartache
             readByte += size;
             return ReadBinary(reader, size);
         }
+
+        public static void WriteTag(BinaryWriter writer, string tag)
+        {
+            writer.Write(Encoding.ASCII.GetBytes(tag));
+        } 
     }
 }

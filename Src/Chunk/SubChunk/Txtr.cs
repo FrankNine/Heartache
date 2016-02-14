@@ -15,6 +15,7 @@ namespace Heartache.Chunk
         class Data
         {
             public List<string> exportedImageNameList = new List<string>();
+            public List<int> fileInfoUnknown = new List<int>();
         }
         Data _data = new Data();
 
@@ -39,7 +40,7 @@ namespace Heartache.Chunk
                 int elementPosition = elementPositions[i];
                 reader.BaseStream.Seek(elementPosition, SeekOrigin.Begin);
 
-                BinaryStreamOperator.ReadPosition(reader);
+                _data.fileInfoUnknown.Add(BinaryStreamOperator.ReadPosition(reader));
                 pngPositions[i] = BinaryStreamOperator.ReadPosition(reader);
             }
 
@@ -91,27 +92,48 @@ namespace Heartache.Chunk
 
         public override void WriteBinary(BinaryWriter writer)
         {
-            writer.Write(TAG);
+            int fileInfoPadding = 52;
+
+            BinaryStreamOperator.WriteTag(writer,TAG);
             int textureCount = elementList.Count;
-            int chunkSize = 4 + 4 * textureCount + elementList.Sum(s => s.Length);
+            int chunkSize = 4 + 12 * textureCount + elementList.Sum(s => s.Length) + fileInfoPadding;
 
             writer.Write(chunkSize);
             writer.Write(textureCount);
 
-            int startingPosition = (int)writer.BaseStream.Position + 4 * textureCount;
-            int currentPosition = startingPosition;
+            int fileinfoStartingPosition = (int)writer.BaseStream.Position + 4 * textureCount;
+            int currentPosition = fileinfoStartingPosition;
 
             writer.Write(currentPosition);
             for (int i = 1; i < textureCount; i++)
             {
+                currentPosition += 8;
+                writer.Write(currentPosition);
+            }
+
+            int fileStartingPosition = (int)writer.BaseStream.Position + 8 * textureCount + fileInfoPadding;
+            currentPosition = fileStartingPosition;
+
+            writer.Write(_data.fileInfoUnknown[0]);
+            writer.Write(currentPosition);
+            for (int i = 1; i < textureCount; i++)
+            {
+                writer.Write(_data.fileInfoUnknown[i]);
                 currentPosition += elementList[i - 1].Length;
                 writer.Write(currentPosition);
+            }
+
+            for (int i = 0; i < fileInfoPadding; i++)
+            {
+                writer.Write('\0');
             }
 
             foreach (var element in elementList)
             {
                 writer.Write(element);
             }
+
+
         }
     }
 }

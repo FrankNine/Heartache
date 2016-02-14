@@ -15,6 +15,7 @@ namespace Heartache.Chunk
         class Data
         {
             public List<string> audioFileNameList = new List<string>();
+            public List<byte[]> paddingList = new List<byte[]>();
         }
         Data _data = new Data();
 
@@ -23,7 +24,9 @@ namespace Heartache.Chunk
             int chunkSize = BinaryStreamOperator.ReadSize(reader);
             if (chunkSize == 0) { return; }
 
-            long chunkStartingPosition = reader.BaseStream.Position;
+            int chunkStartingPosition = (int)reader.BaseStream.Position;
+            int chunkEndingPosition = chunkStartingPosition + chunkSize;
+
             int elementCount = BinaryStreamOperator.ReadSize(reader);
             int[] elementPositions = new int[elementCount];
 
@@ -36,8 +39,12 @@ namespace Heartache.Chunk
             {
                 int elementPosition = elementPositions[i];
                 reader.BaseStream.Seek(elementPosition, SeekOrigin.Begin);
-                long elementDataLength = BinaryStreamOperator.ReadSize(reader);
-                audioList.Add(BinaryStreamOperator.ReadBinary(reader, (int)elementDataLength));
+
+                int elementDataLength = BinaryStreamOperator.ReadSize(reader);
+                audioList.Add(BinaryStreamOperator.ReadBinary(reader, elementDataLength));
+                int nextElementPosition = (i != elementCount - 1) ? elementPositions[i + 1] : chunkEndingPosition;
+                int paddingLength = nextElementPosition - (int)reader.BaseStream.Position;
+                _data.paddingList.Add(BinaryStreamOperator.ReadBinary(reader, paddingLength));
             }
         }
 
@@ -77,23 +84,26 @@ namespace Heartache.Chunk
 
         public override void WriteBinary(BinaryWriter writer)
         {
-            int chunkSize = 4 + 4 + 4 * audioList.Count + audioList.Sum(a => a.Length);
+            int chunkSize = 4 + 4 * audioList.Count * 2 + audioList.Sum(a => a.Length) + _data.paddingList.Sum(p => p.Length);
 
-            writer.Write(TAG);
+            BinaryStreamOperator.WriteTag(writer, TAG);
             writer.Write(chunkSize);
+            writer.Write(audioList.Count);
 
             int audioStartingPosition = (int)writer.BaseStream.Position + 4 * audioList.Count;
 
             writer.Write(audioStartingPosition);
             for(int i = 1; i < audioList.Count; i++)
             {
-                audioStartingPosition += audioList[i - 1].Length;
+                audioStartingPosition += audioList[i - 1].Length + _data.paddingList[i-1].Length + 4;
                 writer.Write(audioStartingPosition);
             }
 
-            foreach(var audio in audioList)
+            for (int i = 0; i < audioList.Count; i++)
             {
-                writer.Write(audio);
+                writer.Write(audioList[i].Length);
+                writer.Write(audioList[i]);
+                writer.Write(_data.paddingList[i]);
             }
         }
     }

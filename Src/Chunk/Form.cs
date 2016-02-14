@@ -42,7 +42,7 @@ namespace Heartache.Chunk
             while (reader.BaseStream.Position != reader.BaseStream.Length)
             {
                 string chunkTag = BinaryStreamOperator.ReadChunkTag(reader, ref readByte);
-
+                Console.WriteLine(chunkTag);
                 switch (chunkTag)
                 {
                     case "GEN8": gen8.ParseBinary(reader); break;
@@ -67,6 +67,8 @@ namespace Heartache.Chunk
                     case "STRG": strg.ParseBinary(reader); break;
                     case "TXTR": txtr.ParseBinary(reader); break;
                     case "AUDO": audo.ParseBinary(reader); break;
+
+                    default: Console.WriteLine("Unhandled data!"); break;
                 }
             }
 

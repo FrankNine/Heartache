@@ -12,7 +12,7 @@ namespace Heartache
         [STAThread]
         static void Main(string[] args)
         {
-            Disassemble();
+            //Disassemble();
             Reassemble();
         }
 
