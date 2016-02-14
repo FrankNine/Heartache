@@ -12,8 +12,8 @@ namespace Heartache
         [STAThread]
         static void Main(string[] args)
         {
-            //Disassemble();
-            Reassemble();
+            Disassemble();
+            //Reassemble();
         }
 
         static void Disassemble()

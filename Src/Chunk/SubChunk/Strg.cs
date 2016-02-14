@@ -31,16 +31,16 @@ namespace Heartache.Chunk
 
             int elementCount = BinaryStreamOperator.ReadSize(reader);
 
-            uint[] elementPositions = new uint[elementCount];
+            int[] elementPositions = new int[elementCount];
 
             for (int i = 0; i < elementCount; i++)
             {
-                elementPositions[i] = (uint)BinaryStreamOperator.ReadPosition(reader);
+                elementPositions[i] = BinaryStreamOperator.ReadPosition(reader);
             }
 
             for (int i = 0; i < elementCount; i++)
             {
-                uint elementPosition = elementPositions[i];
+                int elementPosition = elementPositions[i];
                 reader.BaseStream.Seek(elementPosition, SeekOrigin.Begin);
                 _data.stringList.Add(new StringEntry
                 {

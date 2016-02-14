@@ -1,19 +1,22 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
+using System.Collections.Generic;
+
+using Newtonsoft.Json;
+
+using Heartache.Primitive;
 
 namespace Heartache.Chunk
 {
     public class NamedElement
     {
-        public int nameStringPosition;
+        public StringEntry name;
         public byte[] content;
     }
 
     public class NamedElementFilename
     {
-        public int nameStringPosition;
+        public StringEntry name;
         public string filename;
     }
 
@@ -63,14 +66,20 @@ namespace Heartache.Chunk
                 long elementDataLength = (((i != elementCount - 1) ? elementPositions[i + 1] : (chunkSize + chunkStartingPosition)) - elementPositions[i]) - 4;
 
                 reader.BaseStream.Seek(elementDataStartPosition, SeekOrigin.Begin);
-                elementList.Add(
+                elementList.Add
+                (
                     new NamedElement
                     {
-                        nameStringPosition = elementNamePosition,
+                        name = new StringEntry { position = elementNamePosition },
                         content = BinaryStreamOperator.ReadBinary(reader, (int)elementDataLength)
                     }
                 );
             }
+        }
+
+        public void ResolveString(Strg stringChunk)
+        {
+            elementList.ForEach(e => e.name = stringChunk.LookUpStringEntryByPosition(e.name.position));
         }
 
         public override void Export(IFile fileSystem, string rootPath)
@@ -83,7 +92,14 @@ namespace Heartache.Chunk
             {
                 string filename = System.IO.Path.Combine(folderPath, i.ToString());
                 fileSystem.WriteBinary(filename, elementList[i].content);
-                filenameList.Add(new NamedElementFilename { nameStringPosition = elementList[i].nameStringPosition, filename = filename });
+                filenameList.Add
+                (
+                    new NamedElementFilename
+                    {
+                        name = elementList[i].name,
+                        filename = filename
+                    }
+                );
             }
 
             string indexFullPath = System.IO.Path.Combine(folderPath, GetIndexFilename());
@@ -101,10 +117,11 @@ namespace Heartache.Chunk
             foreach (var namedElementFilename in namedElementFilenameList)
             {
                 string filePath = System.IO.Path.Combine(folderPath, namedElementFilename.filename);
-                elementList.Add(
+                elementList.Add
+                (
                     new NamedElement
                     {
-                        nameStringPosition = namedElementFilename.nameStringPosition,
+                        name = namedElementFilename.name,
                         content = fileSystem.ReadBinary(filePath)
                     }
                 );
@@ -130,7 +147,7 @@ namespace Heartache.Chunk
 
             foreach (var element in elementList)
             {
-                writer.Write(element.nameStringPosition);
+                writer.Write(element.name.position);
                 writer.Write(element.content);
             }
         }

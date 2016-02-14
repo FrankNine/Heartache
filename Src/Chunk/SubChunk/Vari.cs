@@ -33,17 +33,21 @@ namespace Heartache.Chunk
                 int elementNamePosition = BinaryStreamOperator.ReadPosition(reader);
                 byte[] content = BinaryStreamOperator.ReadBinary(reader, elementSize);
 
-                _data.elementList.Add(new NamedElement
-                {
-                    nameStringPosition = elementNamePosition,
-                    content = content
-                });
+                _data.elementList.Add
+                (
+                    new NamedElement
+                    {
+                        name = new Primitive.StringEntry { position = elementNamePosition},
+                        content = content
+                    }
+                );
             }
         }
 
         public override void Export(IFile fileSystem, string rootPath)
         {
             string folderPath = GetFolder(rootPath);
+            fileSystem.CreateDirectoryWithoutReadOnly(folderPath);
             string indexFullPath = System.IO.Path.Combine(folderPath, INDEX_FILENAME);
             string indexJson = JsonConvert.SerializeObject(_data);
             fileSystem.WriteText(indexFullPath, indexJson);
@@ -69,7 +73,7 @@ namespace Heartache.Chunk
             writer.Write(_data.unknown);
             foreach(var element in _data.elementList)
             {
-                writer.Write(element.nameStringPosition);
+                writer.Write(element.name.position);
                 writer.Write(element.content);
             }
         }

@@ -108,6 +108,10 @@ namespace Heartache.Chunk
         {
             gen8.ResolveString(strg);
             font.ResolveString(strg);
+            func.ResolveString(strg);
+            objt.ResolveString(strg);
+            room.ResolveString(strg);
+            sprt.ResolveString(strg);
         }
 
         public override void Export(IFile fileSystem, string rootPath)

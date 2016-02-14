@@ -1,7 +1,9 @@
 ﻿using System.IO;
 using System.Collections.Generic;
+
 using Newtonsoft.Json;
-using System;
+
+using Heartache.Primitive;
 
 namespace Heartache.Chunk
 {
@@ -12,14 +14,14 @@ namespace Heartache.Chunk
 
         class Element12
         {
-            public int stringNamePosition;
+            public StringEntry name;
             public byte[] unknown; 
         }
 
         class Element16
         {
             public byte[] unknown1;
-            public int stringNamePosition;
+            public StringEntry name;
             public byte[] unknown2;
         }
 
@@ -45,7 +47,7 @@ namespace Heartache.Chunk
 
                 _data.elementList12.Add(new Element12
                 {
-                    stringNamePosition = elementNamePosition,
+                    name = new StringEntry { position = elementNamePosition },
                     unknown = content
                 });
             }
@@ -61,7 +63,7 @@ namespace Heartache.Chunk
                 _data.elementList16.Add(new Element16
                 {
                     unknown1 = header,
-                    stringNamePosition = elementNamePosition,
+                    name = new StringEntry { position = elementNamePosition },
                     unknown2 = content
                 });
             }
@@ -70,9 +72,16 @@ namespace Heartache.Chunk
         public override void Export(IFile fileSystem, string rootPath)
         {
             string folderPath = GetFolder(rootPath);
+            fileSystem.CreateDirectoryWithoutReadOnly(folderPath);
             string indexFullPath = System.IO.Path.Combine(folderPath, INDEX_FILENAME);
             string indexJson = JsonConvert.SerializeObject(_data);
             fileSystem.WriteText(indexFullPath, indexJson);
+        }
+
+        public void ResolveString(Strg stringChunk)
+        {
+            _data.elementList12.ForEach(e => e.name = stringChunk.LookUpStringEntryByPosition(e.name.position));
+            _data.elementList16.ForEach(e => e.name = stringChunk.LookUpStringEntryByPosition(e.name.position));
         }
 
         public override string GetFolder(string rootPath)
@@ -97,7 +106,7 @@ namespace Heartache.Chunk
 
             foreach (var element in _data.elementList12)
             {
-                writer.Write(element.stringNamePosition);
+                writer.Write(element.name.position);
                 writer.Write(element.unknown);
             }
 
@@ -106,7 +115,7 @@ namespace Heartache.Chunk
             foreach (var element in _data.elementList16)
             {
                 writer.Write(element.unknown1);
-                writer.Write(element.stringNamePosition);
+                writer.Write(element.name.position);
                 writer.Write(element.unknown2);
             }
         }

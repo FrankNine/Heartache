@@ -1,19 +1,16 @@
 ﻿using System.IO;
+using System.Text;
+
+using Newtonsoft.Json;
 
 using Heartache.Primitive;
-using Newtonsoft.Json;
-using System.Text;
-using System;
 
 namespace Heartache.Chunk
 {
     class Gen8 : Chunk
     {
-        int chunkSize = 0;
-        byte[] content = null;
-
-        private const string INDEX_FILENAME = "Index.txt";
         public const string TAG = "GEN8";
+        private const string INDEX_FILENAME = "Index.txt";
 
         class Data
         {
@@ -45,15 +42,15 @@ namespace Heartache.Chunk
             int chunkSize = BinaryStreamOperator.ReadSize(reader);
 
             _data.unknown1 = BinaryStreamOperator.ReadBinary(reader, 4);
-            _data.string1.position = (uint)BinaryStreamOperator.ReadPosition(reader);
-            _data.string2.position = (uint)BinaryStreamOperator.ReadPosition(reader);
+            _data.string1.position = BinaryStreamOperator.ReadPosition(reader);
+            _data.string2.position = BinaryStreamOperator.ReadPosition(reader);
             _data.unknown2 = BinaryStreamOperator.ReadBinary(reader, 28);
-            _data.string3.position = (uint)BinaryStreamOperator.ReadPosition(reader);
+            _data.string3.position = BinaryStreamOperator.ReadPosition(reader);
             _data.unknown3 = BinaryStreamOperator.ReadBinary(reader, 16);
             _data.width = BinaryStreamOperator.ReadSize(reader);
             _data.height = BinaryStreamOperator.ReadSize(reader);
             _data.unknown4 = BinaryStreamOperator.ReadBinary(reader, 32);
-            _data.string4.position = (uint)BinaryStreamOperator.ReadSize(reader);
+            _data.string4.position = BinaryStreamOperator.ReadSize(reader);
             _data.unknown5 = BinaryStreamOperator.ReadBinary(reader, chunkSize - 104); 
         }
 

@@ -34,8 +34,8 @@ namespace Heartache.Chunk
 
             public void ReadBinary(BinaryReader reader)
             {
-                fontName.position = (uint)BinaryStreamOperator.ReadPosition(reader);
-                fontFilename.position = (uint)BinaryStreamOperator.ReadPosition(reader);
+                fontName.position = BinaryStreamOperator.ReadPosition(reader);
+                fontFilename.position = BinaryStreamOperator.ReadPosition(reader);
                 _fontSize = BinaryStreamOperator.ReadSize(reader);
                 _unknown = BinaryStreamOperator.ReadBinary(reader, 28);
                 int glyphCount = BinaryStreamOperator.ReadSize(reader);

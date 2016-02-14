@@ -1,9 +1,9 @@
 ﻿namespace Heartache.Primitive
 {
-    class StringEntry
+    public class StringEntry
     {
         public int index;
-        public uint position;
+        public int position;
         public string content;
 
         public int GetSize()

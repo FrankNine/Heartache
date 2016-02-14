@@ -69,7 +69,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BinaryStreamOperator.cs" />
-    <Compile Include="ChunkOperator.cs" />
     <Compile Include="Chunk\Chunk.cs" />
     <Compile Include="Chunk\Form.cs" />
     <Compile Include="Chunk\MetaChunk\SingleNamedArrayChunk.cs" />
