@@ -5,6 +5,18 @@ using System.Linq;
 
 namespace Heartache.Chunk
 {
+    public class NamedElement
+    {
+        public int nameStringPosition;
+        public byte[] content;
+    }
+
+    public class NamedElementFilename
+    {
+        public int nameStringPosition;
+        public string filename;
+    }
+
     abstract class SingleNamedArrayChunk : Chunk
     {
         List<NamedElement> elementList = new List<NamedElement>();
