@@ -3,6 +3,7 @@
 using Heartache.Primitive;
 using Newtonsoft.Json;
 using System.Text;
+using System;
 
 namespace Heartache.Chunk
 {
@@ -35,21 +36,6 @@ namespace Heartache.Chunk
             public StringEntry string4 = new StringEntry();
 
             public byte[] unknown5;
-
-            public int GetSize()
-            {
-                return unknown1.Length 
-                       + 4 
-                       + 4 
-                       + unknown2.Length 
-                       + 4 
-                       + unknown3.Length 
-                       + 4 
-                       + 4 
-                       + unknown4.Length 
-                       + 4 
-                       + unknown5.Length;
-            }
         }
 
         Data _data = new Data();
@@ -107,7 +93,7 @@ namespace Heartache.Chunk
         public override void WriteBinary(BinaryWriter writer)
         {
             writer.Write(Encoding.ASCII.GetBytes(TAG));
-            writer.Write(_data.GetSize());
+            writer.Write(GetChunkContentSize());
             writer.Write(_data.unknown1);
             writer.Write(_data.string1.position);
             writer.Write(_data.string2.position);
@@ -119,6 +105,21 @@ namespace Heartache.Chunk
             writer.Write(_data.unknown4);
             writer.Write(_data.string4.position);
             writer.Write(_data.unknown5);
+        }
+
+        public override int GetChunkContentSize()
+        {
+            return _data.unknown1.Length + 
+                   4 +                      // String 1
+                   4 +                      // String 2
+                   _data.unknown2.Length +
+                   4 +                      // String 3
+                   _data.unknown3.Length +
+                   4 +                      // Window Width
+                   4 +                      // Window Height
+                   _data.unknown4.Length +
+                   4 +                      // String 4
+                   _data.unknown5.Length;
         }
     }
 }

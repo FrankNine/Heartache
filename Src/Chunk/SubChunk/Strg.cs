@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -7,6 +6,7 @@ using Newtonsoft.Json;
 
 using Heartache.Primitive;
 using System.Text;
+using System;
 
 namespace Heartache.Chunk
 {
@@ -83,7 +83,7 @@ namespace Heartache.Chunk
         {
             BinaryStreamOperator.WriteTag(writer, TAG);
             int stringCount = _data.stringList.Count;
-            int chunkSize = 4 + 4 * stringCount + _data.stringList.Sum(s => s.GetSize()) +82;
+            int chunkSize = GetChunkContentSize();
 
             writer.Write(chunkSize);
             writer.Write(stringCount);
@@ -110,6 +110,15 @@ namespace Heartache.Chunk
             {
                 writer.Write('\0');
             }
+        }
+
+        public override int GetChunkContentSize()
+        {
+            int stringCount = _data.stringList.Count;
+            return 4 +                                      // String Count
+                   4 * stringCount +                        // String Pointers
+                   _data.stringList.Sum(s => s.GetSize()) + // String
+                   82;                                      // End Padding
         }
     }
 }

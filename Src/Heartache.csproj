@@ -72,6 +72,8 @@
     <Compile Include="ChunkOperator.cs" />
     <Compile Include="Chunk\Chunk.cs" />
     <Compile Include="Chunk\Form.cs" />
+    <Compile Include="Chunk\MetaChunk\SingleNamedArrayChunk.cs" />
+    <Compile Include="Chunk\MetaChunk\WholeChunk.cs" />
     <Compile Include="Chunk\SubChunk\Agrp.cs" />
     <Compile Include="Chunk\SubChunk\Audo.cs" />
     <Compile Include="Chunk\SubChunk\Bgnd.cs" />

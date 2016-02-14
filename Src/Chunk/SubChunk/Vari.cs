@@ -64,7 +64,7 @@ namespace Heartache.Chunk
         public override void WriteBinary(BinaryWriter writer)
         {
             BinaryStreamOperator.WriteTag(writer, TAG);
-            int chunkSize = _data.elementList.Count * 20 + _data.unknown.Length;
+            int chunkSize = GetChunkContentSize();
             writer.Write(chunkSize);
             writer.Write(_data.unknown);
             foreach(var element in _data.elementList)
@@ -72,6 +72,15 @@ namespace Heartache.Chunk
                 writer.Write(element.nameStringPosition);
                 writer.Write(element.content);
             }
+        }
+
+        public override int GetChunkContentSize()
+        {
+            return _data.unknown.Length +
+                   (
+                        4 + // Name String Pointers
+                        16  // Fixed Length Content
+                   ) * _data.elementList.Count;
         }
     }
 }

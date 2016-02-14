@@ -1,39 +1,18 @@
-﻿using System.Collections.Generic;
-using System.IO;
-
-namespace Heartache.Chunk
+﻿namespace Heartache.Chunk
 {
-    class Room : Chunk
+    class Room : SingleNamedArrayChunk
     {
         const string TAG = "ROOM";
         const string INDEX_FILENAME = "index.txt";
 
-        int chunkSize;
-        List<NamedElement> elementList = new List<NamedElement>();
-
-        public override void ParseBinary(BinaryReader reader)
+        protected override string GetTag()
         {
-            ChunkOperator.DumpSingleNamedArray(reader, ref chunkSize, elementList);
+            return TAG;
         }
 
-        public override void Export(IFile fileSystem, string rootPath)
+        protected override string GetIndexFilename()
         {
-            ChunkOperator.ExportSingleNamedArray(fileSystem, GetFolder(rootPath), INDEX_FILENAME, elementList);
-        }
-
-        public override string GetFolder(string rootPath)
-        {
-            return System.IO.Path.Combine(rootPath, TAG);
-        }
-
-        public override void Import(IFile fileSystem, string rootPath)
-        {
-            ChunkOperator.ImportSingleNamedArray(fileSystem, GetFolder(rootPath), INDEX_FILENAME, elementList);
-        }
-
-        public override void WriteBinary(BinaryWriter writer)
-        {
-            ChunkOperator.WriteSingleNamedArray(writer, TAG, elementList);
+            return INDEX_FILENAME;
         }
     }
 }

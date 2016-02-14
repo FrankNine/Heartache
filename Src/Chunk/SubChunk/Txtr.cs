@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 
 using Newtonsoft.Json;
+using System;
 
 namespace Heartache.Chunk
 {
@@ -89,14 +90,12 @@ namespace Heartache.Chunk
             }
         }
 
-
+        const int fileInfoPadding = 52;
         public override void WriteBinary(BinaryWriter writer)
         {
-            int fileInfoPadding = 52;
-
             BinaryStreamOperator.WriteTag(writer,TAG);
             int textureCount = elementList.Count;
-            int chunkSize = 4 + 12 * textureCount + elementList.Sum(s => s.Length) + fileInfoPadding;
+            int chunkSize = GetChunkContentSize();
 
             writer.Write(chunkSize);
             writer.Write(textureCount);
@@ -134,6 +133,16 @@ namespace Heartache.Chunk
             }
 
 
+        }
+
+        public override int GetChunkContentSize()
+        {
+            int textureCount = elementList.Count;
+            return 4 +                              // Texture Count
+                   4 * textureCount +               // Texture FileInfo Pointers
+                   8 * textureCount +               // Texture FileInfo (4 byte Unknown, 4 byte Pointer)
+                   elementList.Sum(s => s.Length) + // Texture Content
+                   fileInfoPadding;                 // End Padding
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using System;
 
 namespace Heartache.Chunk
 {
@@ -89,8 +90,7 @@ namespace Heartache.Chunk
         public override void WriteBinary(BinaryWriter writer)
         {
             BinaryStreamOperator.WriteTag(writer, TAG);
-            int chunkSize = 4 + _data.elementList12.Count * 12 +
-                            4 + _data.elementList16.Count * 16;
+            int chunkSize = GetChunkContentSize();
 
             writer.Write(chunkSize);
             writer.Write(_data.elementList12.Count);
@@ -109,6 +109,14 @@ namespace Heartache.Chunk
                 writer.Write(element.stringNamePosition);
                 writer.Write(element.unknown2);
             }
+        }
+
+        public override int GetChunkContentSize()
+        {
+            return 4 +                              // 12 byte Element Count
+                   _data.elementList12.Count * 12 + // 12 byte Element Content
+                   4 +                              // 16 byte Element Count
+                   _data.elementList16.Count * 16;  // 16 byte Element Content
         }
     }
 }

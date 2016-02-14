@@ -2,39 +2,19 @@
 
 namespace Heartache.Chunk
 {
-    class Bgnd : Chunk
+    class Bgnd : WholeChunk
     {
-        const string TAG = "BGND";
+        public const string TAG = "BGND";
         const string FILENAME = "0";
 
-        int chunkSize = 0;
-        byte[] content = null;
-
-        public override void ParseBinary(BinaryReader reader)
+        protected override string GetTag()
         {
-            ChunkOperator.DumpChunkAsAWhole(reader, ref chunkSize, ref content);
+            return TAG;
         }
 
-        public override void Export(IFile fileSystem, string rootPath)
+        protected override string GetExportedFilename()
         {
-            string exportFolder = GetFolder(rootPath);
-            ChunkOperator.ExportChunkAsAWhole(fileSystem, exportFolder, FILENAME, content);
-        }
-
-        public override string GetFolder(string rootPath)
-        {
-            return System.IO.Path.Combine(rootPath, TAG);
-        }
-
-        public override void Import(IFile fileSystem,string rootPath)
-        {
-            string importFolder = GetFolder(rootPath);
-            ChunkOperator.ImportChunkAsAWhole(fileSystem, importFolder, FILENAME, ref content);
-        }
-
-        public override void WriteBinary(BinaryWriter writer)
-        {
-            ChunkOperator.WriteChunkAsAWhole(writer, TAG, content);
+            return FILENAME;
         }
     }
 }

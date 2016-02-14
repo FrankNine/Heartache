@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Text;
+using System.Linq;
 
 namespace Heartache.Chunk
 {
     public class Form : Chunk
     {
+        const string TAG = "FORM";
+
         Gen8 gen8 = new Gen8();
         Optn optn = new Optn();
         Extn extn = new Extn();
@@ -29,6 +32,32 @@ namespace Heartache.Chunk
         Txtr txtr = new Txtr();
         Audo audo = new Audo();
 
+        private List<Chunk> _allSubChunk = new List<Chunk>();
+        public Form()
+        {
+            _allSubChunk.Add(gen8);
+            _allSubChunk.Add(optn);
+            _allSubChunk.Add(extn);
+            _allSubChunk.Add(sond);
+            _allSubChunk.Add(agrp);
+            _allSubChunk.Add(sprt);
+            _allSubChunk.Add(bgnd);
+            _allSubChunk.Add(path);
+            _allSubChunk.Add(scpt);
+            _allSubChunk.Add(shdr);
+            _allSubChunk.Add(font);
+            _allSubChunk.Add(tmln);
+            _allSubChunk.Add(objt);
+            _allSubChunk.Add(room);
+            _allSubChunk.Add(dafl);
+            _allSubChunk.Add(tpag);
+            _allSubChunk.Add(code);
+            _allSubChunk.Add(vari);
+            _allSubChunk.Add(func);
+            _allSubChunk.Add(strg);
+            _allSubChunk.Add(txtr);
+            _allSubChunk.Add(audo);
+        }
 
         public override string GetFolder(string rootPath)
         {
@@ -83,83 +112,25 @@ namespace Heartache.Chunk
 
         public override void Export(IFile fileSystem, string rootPath)
         {
-            gen8.Export(fileSystem, rootPath);
-            optn.Export(fileSystem, rootPath);
-            extn.Export(fileSystem, rootPath);
-            sond.Export(fileSystem, rootPath);
-            agrp.Export(fileSystem, rootPath);
-            sprt.Export(fileSystem, rootPath);
-            bgnd.Export(fileSystem, rootPath);
-            path.Export(fileSystem, rootPath);
-            scpt.Export(fileSystem, rootPath);
-            shdr.Export(fileSystem, rootPath);
-            font.Export(fileSystem, rootPath);
-            tmln.Export(fileSystem, rootPath);
-            objt.Export(fileSystem, rootPath);
-            room.Export(fileSystem, rootPath);
-            dafl.Export(fileSystem, rootPath);
-            tpag.Export(fileSystem, rootPath);
-            code.Export(fileSystem, rootPath);
-            vari.Export(fileSystem, rootPath);
-            func.Export(fileSystem, rootPath);
-            strg.Export(fileSystem, rootPath);
-            txtr.Export(fileSystem, rootPath);
-            audo.Export(fileSystem, rootPath);
+            _allSubChunk.ForEach(c => c.Export(fileSystem, rootPath));
         }
 
         public override void Import(IFile fileSystem, string rootPath)
         {
-            gen8.Import(fileSystem, rootPath);
-            optn.Import(fileSystem, rootPath);
-            extn.Import(fileSystem, rootPath);
-            sond.Import(fileSystem, rootPath);
-            agrp.Import(fileSystem, rootPath);
-            sprt.Import(fileSystem, rootPath);
-            bgnd.Import(fileSystem, rootPath);
-            path.Import(fileSystem, rootPath);
-            scpt.Import(fileSystem, rootPath);
-            shdr.Import(fileSystem, rootPath);
-            font.Import(fileSystem, rootPath);
-            tmln.Import(fileSystem, rootPath);
-            objt.Import(fileSystem, rootPath);
-            room.Import(fileSystem, rootPath);
-            dafl.Import(fileSystem, rootPath);
-            tpag.Import(fileSystem, rootPath);
-            code.Import(fileSystem, rootPath);
-            vari.Import(fileSystem, rootPath);
-            func.Import(fileSystem, rootPath);
-            strg.Import(fileSystem, rootPath);
-            txtr.Import(fileSystem, rootPath);
-            audo.Import(fileSystem, rootPath);
+            _allSubChunk.ForEach(c => c.Import(fileSystem, rootPath));
         }
 
         public override void WriteBinary(BinaryWriter writer)
         {
-            writer.Write(Encoding.ASCII.GetBytes("FORM"));
-            writer.Write(57056094);
+            BinaryStreamOperator.WriteTag(writer, TAG);
+            writer.Write(GetChunkContentSize());
 
-            gen8.WriteBinary(writer);
-            optn.WriteBinary(writer);
-            extn.WriteBinary(writer);
-            sond.WriteBinary(writer);
-            agrp.WriteBinary(writer);
-            sprt.WriteBinary(writer);
-            bgnd.WriteBinary(writer);
-            path.WriteBinary(writer);
-            scpt.WriteBinary(writer);
-            shdr.WriteBinary(writer);
-            font.WriteBinary(writer);
-            tmln.WriteBinary(writer);
-            objt.WriteBinary(writer);
-            room.WriteBinary(writer);
-            dafl.WriteBinary(writer);
-            tpag.WriteBinary(writer);
-            code.WriteBinary(writer);
-            vari.WriteBinary(writer);
-            func.WriteBinary(writer);
-            strg.WriteBinary(writer);
-            txtr.WriteBinary(writer);
-            audo.WriteBinary(writer);
+            _allSubChunk.ForEach(c => c.WriteBinary(writer));
+        }
+
+        public override int GetChunkContentSize()
+        {
+            return _allSubChunk.Sum(c => c.GetChunkFullSize());
         }
     }
 }

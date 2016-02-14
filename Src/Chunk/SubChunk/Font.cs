@@ -206,5 +206,10 @@ namespace Heartache.Chunk
 
             writer.Write(_data.unknown);
         }
+
+        public override int GetChunkContentSize()
+        {
+            return _data.GetSize();
+        }
     }
 }

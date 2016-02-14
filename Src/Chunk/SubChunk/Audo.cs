@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 
 using Newtonsoft.Json;
+using System;
 
 namespace Heartache.Chunk
 {
@@ -84,7 +85,7 @@ namespace Heartache.Chunk
 
         public override void WriteBinary(BinaryWriter writer)
         {
-            int chunkSize = 4 + 4 * audioList.Count * 2 + audioList.Sum(a => a.Length) + _data.paddingList.Sum(p => p.Length);
+            int chunkSize = GetChunkContentSize();
 
             BinaryStreamOperator.WriteTag(writer, TAG);
             writer.Write(chunkSize);
@@ -105,6 +106,15 @@ namespace Heartache.Chunk
                 writer.Write(audioList[i]);
                 writer.Write(_data.paddingList[i]);
             }
+        }
+
+        public override int GetChunkContentSize()
+        {
+            return 4 +                                   // Audio Count
+                   4 * audioList.Count +                 // Audio Content Pointer
+                   4 * audioList.Count +                 // Audio Content Length
+                   audioList.Sum(a => a.Length) +        // Audio Content
+                   _data.paddingList.Sum(p => p.Length); // Padding
         }
     }
 }
