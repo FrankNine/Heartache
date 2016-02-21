@@ -16,7 +16,7 @@ namespace Heartache.Chunk
             string indexPath = System.IO.Path.Combine(extraFontFolderPath, indexFilename);
             string indexJsonContent = fileSystem.ReadText(indexPath);
             //List<int> extraFontIndexList = JsonConvert.DeserializeObject<List<int>>(indexJsonContent);
-            List<int> extraFontIndexList = new List<int> { 1 };
+            List<int> extraFontIndexList = new List<int> { 2 };
             patchDict = new Dictionary<int, Font.FontElement>();
             foreach (int exfontIndex in extraFontIndexList)
             {

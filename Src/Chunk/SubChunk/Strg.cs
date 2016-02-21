@@ -138,8 +138,9 @@ namespace Heartache.Chunk
 
         public static void WriteString(BinaryWriter writer, string writtenString)
         {
-            writer.Write(writtenString.Length);
-            writer.Write(Encoding.UTF8.GetBytes(writtenString));
+            byte[] bytes = Encoding.UTF8.GetBytes(writtenString);
+            writer.Write(bytes.Length);
+            writer.Write(bytes);
             writer.Write('\0');
         }
 

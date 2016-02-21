@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Heartache.Chunk
 {
@@ -37,7 +38,7 @@ namespace Heartache.Chunk
 
         public int GetSize()
         {
-            return patchDict.Sum(s => (s.Value.Length + 5));
+            return patchDict.Sum(s => (Encoding.UTF8.GetBytes(s.Value).Length + 5));
         }
 
         public void Apply(BinaryWriter writer, int strgStartingPosition, int strgOriginalSize)
