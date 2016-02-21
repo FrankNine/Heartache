@@ -120,19 +120,21 @@ namespace Heartache.Chunk
             string exstrgPath = System.IO.Path.Combine(strg.GetFolder(rootPath), TRANSLATED_FILENAME);
             exStrg.Import(fileSystem, strgPath, exstrgPath);
 
-            //exFont.Import(fileSystem, System.IO.Path.Combine(rootPath, "EXFONT"), "index.txt");
+            exFont.Import(fileSystem, System.IO.Path.Combine(rootPath, "EXFONT"), "index.txt");
         }
 
         const string con = "what is it?";
         public override void WriteBinary(BinaryWriter writer)
         {
             BinaryStreamOperator.WriteTag(writer, TAG);
-            writer.Write(GetChunkContentSize() + exStrg.GetSize());
+            writer.Write(GetChunkContentSize() + exStrg.GetSize() + exFont.GetSize());
 
             _allSubChunk.TakeWhile(c=>c!=strg).ToList().ForEach(c => c.WriteBinary(writer));
             int strgStartingPosition = (int)writer.BaseStream.Position;
             strg.WriteBinary(writer);
             exStrg.Apply(writer, strgStartingPosition, strg.GetChunkContentSize());
+            int fontStartingPosition = 0x1DB03C;
+            exFont.Apply(writer, fontStartingPosition, strgStartingPosition, strg.GetChunkContentSize() + exStrg.GetSize());
 
             txtr.WriteBinary(writer);
             audo.WriteBinary(writer);

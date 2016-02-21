@@ -134,10 +134,9 @@ namespace Heartache.Chunk
                 return 22;
             }
 
-            public void WriteFontSprite(BinaryWriter writer, int pointerPosition, int targetPosition)
+            public void WriteFontSprite(BinaryWriter writer, int pointerPosition)
             {
-                long currentPosition = writer.BaseStream.Position;
-                writer.BaseStream.Position = targetPosition;
+                int startPosition = (int)writer.BaseStream.Position;
 
                 writer.Write(x);
                 writer.Write(y);
@@ -149,9 +148,10 @@ namespace Heartache.Chunk
                 writer.Write(w);
                 writer.Write(h);
                 writer.Write(txtrIndex);
-                writer.BaseStream.Position = pointerPosition;
-                writer.Write(targetPosition);
 
+                long currentPosition = writer.BaseStream.Position;
+                writer.BaseStream.Position = pointerPosition;
+                writer.Write(startPosition);
                 writer.BaseStream.Position = currentPosition;
             }
         }

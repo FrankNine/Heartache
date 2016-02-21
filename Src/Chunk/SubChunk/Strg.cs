@@ -129,6 +129,11 @@ namespace Heartache.Chunk
             {
                 WriteString(writer, line.content);
             }
+
+            for(int i = 0; i < 82; i++)
+            {
+                writer.Write('\0');
+            }
         }
 
         public static void WriteString(BinaryWriter writer, string writtenString)
@@ -143,7 +148,7 @@ namespace Heartache.Chunk
             int stringCount = GetStringCount();
             return 4 +                                      // String Count
                    4 * stringCount +                        // String Pointers
-                   _data.stringList.Sum(s => s.GetSize());  // String
+                   _data.stringList.Sum(s => s.GetSize()) + 82;  // String
         }
 
         public int GetStringCount()
