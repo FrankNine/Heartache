@@ -129,14 +129,9 @@ namespace Heartache.Chunk
             {
                 WriteString(writer, line.content);
             }
-            /*
-            for(int i = 0; i < 82; i++)
-            {
-                writer.Write('\0');
-            }*/
         }
 
-        void WriteString(BinaryWriter writer, string writtenString)
+        public static void WriteString(BinaryWriter writer, string writtenString)
         {
             writer.Write(writtenString.Length);
             writer.Write(Encoding.UTF8.GetBytes(writtenString));
@@ -145,10 +140,15 @@ namespace Heartache.Chunk
 
         public override int GetChunkContentSize()
         {
-            int stringCount = _data.stringList.Count;
+            int stringCount = GetStringCount();
             return 4 +                                      // String Count
                    4 * stringCount +                        // String Pointers
                    _data.stringList.Sum(s => s.GetSize());  // String
+        }
+
+        public int GetStringCount()
+        {
+            return _data.stringList.Count;
         }
     }
 }

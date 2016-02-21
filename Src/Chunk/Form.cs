@@ -107,18 +107,35 @@ namespace Heartache.Chunk
             _allSubChunk.ForEach(c => c.Export(fileSystem, rootPath));
         }
 
+        const string INDEX_FILENAME = "Strg.txt";
+        const string TRANSLATED_FILENAME = "Strg-t.txt";
+        ExtraStrg exStrg = new ExtraStrg();
+
+        ExtraFont exFont = new ExtraFont();
         public override void Import(IFile fileSystem, string rootPath)
         {
             _allSubChunk.ForEach(c => c.Import(fileSystem, rootPath));
+
+            string strgPath = System.IO.Path.Combine(strg.GetFolder(rootPath), INDEX_FILENAME);
+            string exstrgPath = System.IO.Path.Combine(strg.GetFolder(rootPath), TRANSLATED_FILENAME);
+            exStrg.Import(fileSystem, strgPath, exstrgPath);
+
+            //exFont.Import(fileSystem, System.IO.Path.Combine(rootPath, "EXFONT"), "index.txt");
         }
 
         const string con = "what is it?";
         public override void WriteBinary(BinaryWriter writer)
         {
             BinaryStreamOperator.WriteTag(writer, TAG);
-            writer.Write(GetChunkContentSize());
+            writer.Write(GetChunkContentSize() + exStrg.GetSize());
 
-            _allSubChunk.ForEach(c => c.WriteBinary(writer));
+            _allSubChunk.TakeWhile(c=>c!=strg).ToList().ForEach(c => c.WriteBinary(writer));
+            int strgStartingPosition = (int)writer.BaseStream.Position;
+            strg.WriteBinary(writer);
+            exStrg.Apply(writer, strgStartingPosition, strg.GetChunkContentSize());
+
+            txtr.WriteBinary(writer);
+            audo.WriteBinary(writer);
         }
 
         public override int GetChunkContentSize()

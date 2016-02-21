@@ -7,6 +7,8 @@ namespace Heartache.Chunk
 {
     class ExtraStrg
     {
+        
+
         Dictionary<int, string> patchDict;
 
         public void Import(IFile fileSystem,
@@ -38,16 +40,22 @@ namespace Heartache.Chunk
             return patchDict.Sum(s => (s.Value.Length + 5));
         }
 
-        public void Apply(StreamWriter writer, int strgPointerStartingPosition)
+        public void Apply(BinaryWriter writer, int strgStartingPosition, int strgOriginalSize)
         {
+            { 
+                long positionCache = writer.BaseStream.Position;
+                writer.BaseStream.Position = strgStartingPosition + 4;
+                writer.Write(strgOriginalSize + GetSize());
+                writer.BaseStream.Position = positionCache;
+            }
+
+            int strgPointerStartingPosition = strgStartingPosition + 12;
             foreach (var stringToPatch in patchDict)
             {
                 int overwritePosition = strgPointerStartingPosition + stringToPatch.Key * 4;
                 int patchStringPosition = (int)writer.BaseStream.Position;
 
-                writer.Write(stringToPatch.Value.Length);
-                writer.Write(stringToPatch.Value);
-                writer.Write('\0');
+                Strg.WriteString(writer, stringToPatch.Value);
 
                 long positionCache = writer.BaseStream.Position;
                 writer.BaseStream.Position = overwritePosition;
