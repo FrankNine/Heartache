@@ -41,7 +41,6 @@ namespace Heartache
         static void Reassemble()
         {
             form.Import(new FileIO(), FileIO.GetDumpFolderPath());
-            form.RewriteStrings();
             BinaryWriter writer = FileIO.GetDataWinBinaryWriter();
             form.WriteBinary(writer);
             writer.Dispose();

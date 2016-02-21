@@ -1,6 +1,6 @@
 ﻿namespace Heartache.Chunk
 {
-    class Sprt : SingleNamedArrayChunk
+    class Sprt : WholeChunk
     {
         const string TAG = "SPRT";
         const string INDEX_FILENAME = "index.txt";
@@ -10,7 +10,7 @@
             return TAG;
         }
 
-        protected override string GetIndexFilename()
+        protected override string GetExportedFilename()
         {
             return INDEX_FILENAME;
         }

@@ -1,18 +1,20 @@
-﻿using System.IO;
-using System.Text;
+﻿using System;
+using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 
-using Newtonsoft.Json;
-
 using Heartache.Primitive;
+using System.Text;
 
 namespace Heartache.Chunk
 {
+
     class Strg : Chunk
     {
         const string TAG = "STRG";
         const string INDEX_FILENAME = "Strg.txt";
+        const string TRANSLATED_FILENAME = "Strg-t.txt";
+        const string EXTRA_FONT_FOLDER = "EXFONT";
 
         class Data
         {
@@ -77,8 +79,9 @@ namespace Heartache.Chunk
         {
             string exportPath = GetFolder(rootPath);
             fileSystem.CreateDirectoryWithoutReadOnly(exportPath);
-            string serializedString = JsonConvert.SerializeObject(_data, Formatting.Indented);
-            fileSystem.WriteText(System.IO.Path.Combine(exportPath, INDEX_FILENAME), serializedString);
+
+            string stringList = string.Join(Environment.NewLine, _data.stringList.Select(e=>e.content).ToArray());
+            fileSystem.WriteText(System.IO.Path.Combine(exportPath, INDEX_FILENAME), stringList);
         }
 
         public override string GetFolder(string rootPath)
@@ -86,62 +89,58 @@ namespace Heartache.Chunk
             return System.IO.Path.Combine(rootPath, TAG);
         }
 
-        public void RewriteAllStringPosition(int strgStartingPosition)
-        {
-            int stringCount = _data.stringList.Count;
-            _data.stringList.First().position =
-                strgStartingPosition +
-                4 + // Tag
-                4 + // Chunk Size
-                4 + // String Count
-                4 * stringCount;
-
-            for (int i = 1; i < stringCount; i++)
-            {
-                _data.stringList[i].position = _data.stringList[i - 1].position + _data.stringList[i - 1].GetSize();
-            }
-        }
-
         public override void Import(IFile fileSystem, string rootPath)
         {
             string folderPath = GetFolder(rootPath);
             string indexFullPath = System.IO.Path.Combine(folderPath, INDEX_FILENAME);
-            string jsonContent = fileSystem.ReadText(indexFullPath);
-            _data = JsonConvert.DeserializeObject<Data>(jsonContent);
-        }
+            string stringList = fileSystem.ReadText(indexFullPath);
 
+            string[] lines = stringList.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
+            for(int i = 0; i < lines.Length;i++)
+            {
+                _data.stringList.Add(new StringEntry() { index = i, content = lines[i] });
+            }
+        }
 
         public override void WriteBinary(BinaryWriter writer)
         {
             BinaryStreamOperator.WriteTag(writer, TAG);
-            int stringCount = _data.stringList.Count;
+            int stringCount = _data.stringList.Count();
             int chunkSize = GetChunkContentSize();
+
+            long chunkSizePosition = writer.BaseStream.Position;
 
             writer.Write(chunkSize);
             writer.Write(stringCount);
 
-            int startingPosition = (int)writer.BaseStream.Position + 4 * stringCount;
-            int currentPosition = startingPosition;
+            long pointerStartingPosition = writer.BaseStream.Position;
 
-            writer.Write(currentPosition);
+            int originalStringStartingPosition = (int)writer.BaseStream.Position + 4 * stringCount;
+            int originalStringCurrentPosition = originalStringStartingPosition;
+
+            writer.Write(originalStringCurrentPosition);
             for (int i = 1; i < stringCount; i++)
             {
-                currentPosition += _data.stringList[i - 1].GetSize();
-                writer.Write(currentPosition);
+                originalStringCurrentPosition += _data.stringList[i - 1].GetSize();
+                writer.Write(originalStringCurrentPosition);
             }
 
-            foreach (var strg in _data.stringList)
+            foreach (var line in _data.stringList)
             {
-                writer.Write(strg.content.Length);
-                writer.Write(Encoding.ASCII.GetBytes(strg.content));
-                writer.Write('\0');
+                WriteString(writer, line.content);
             }
+            /*
+            for(int i = 0; i < 82; i++)
+            {
+                writer.Write('\0');
+            }*/
+        }
 
-            // Padding?
-            for (int i = 0; i < 82; i++)
-            {
-                writer.Write('\0');
-            }
+        void WriteString(BinaryWriter writer, string writtenString)
+        {
+            writer.Write(writtenString.Length);
+            writer.Write(Encoding.UTF8.GetBytes(writtenString));
+            writer.Write('\0');
         }
 
         public override int GetChunkContentSize()
@@ -149,8 +148,7 @@ namespace Heartache.Chunk
             int stringCount = _data.stringList.Count;
             return 4 +                                      // String Count
                    4 * stringCount +                        // String Pointers
-                   _data.stringList.Sum(s => s.GetSize()) + // String
-                   82;                                      // End Padding
+                   _data.stringList.Sum(s => s.GetSize());  // String
         }
     }
 }

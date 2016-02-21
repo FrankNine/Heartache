@@ -1,90 +1,18 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.IO;
-
-namespace Heartache.Chunk
+﻿namespace Heartache.Chunk
 {
-    class Vari : Chunk
+    class Vari : WholeChunk
     {
         const string TAG = "VARI";
-        const string INDEX_FILENAME = "index.txt";
+        const string FILENAME = "0";
 
-        class Data
+        protected override string GetTag()
         {
-            public byte[] unknown;
-            public List<NamedElement> elementList = new List<NamedElement>();
+            return TAG;
         }
 
-        Data _data = new Data();
-
-        public override void ParseBinary(BinaryReader reader)
+        protected override string GetExportedFilename()
         {
-            int chunkSize = BinaryStreamOperator.ReadSize(reader);
-            if (chunkSize == 0) { return; }
-
-            _data.unknown = BinaryStreamOperator.ReadBinary(reader, 12);
-            int elementSize = 16;
-
-            int elementCount = (chunkSize - 12) / (4 + elementSize);
-
-            for (int i = 0; i < elementCount; i++)
-            {
-                int elementNamePosition = BinaryStreamOperator.ReadPosition(reader);
-                byte[] content = BinaryStreamOperator.ReadBinary(reader, elementSize);
-
-                _data.elementList.Add
-                (
-                    new NamedElement
-                    {
-                        name = new Primitive.StringEntry { position = elementNamePosition},
-                        content = content
-                    }
-                );
-            }
-        }
-
-        public override void Export(IFile fileSystem, string rootPath)
-        {
-            string folderPath = GetFolder(rootPath);
-            fileSystem.CreateDirectoryWithoutReadOnly(folderPath);
-            string indexFullPath = System.IO.Path.Combine(folderPath, INDEX_FILENAME);
-            string indexJson = JsonConvert.SerializeObject(_data);
-            fileSystem.WriteText(indexFullPath, indexJson);
-        }
-
-        public override string GetFolder(string rootPath)
-        {
-            return System.IO.Path.Combine(rootPath, TAG);
-        }
-
-        public override void Import(IFile fileSystem, string rootPath)
-        {
-            string folderPath = GetFolder(rootPath);
-            string indexFullPath = System.IO.Path.Combine(folderPath, INDEX_FILENAME);
-            _data = JsonConvert.DeserializeObject<Data>(fileSystem.ReadText(indexFullPath));
-        }
-
-        public override void WriteBinary(BinaryWriter writer)
-        {
-            BinaryStreamOperator.WriteTag(writer, TAG);
-            int chunkSize = GetChunkContentSize();
-            writer.Write(chunkSize);
-            writer.Write(_data.unknown);
-            foreach(var element in _data.elementList)
-            {
-                writer.Write(element.name.position);
-                writer.Write(element.content);
-            }
-        }
-
-        public override int GetChunkContentSize()
-        {
-            return _data.unknown.Length +
-                   (
-                        4 + // Name String Pointers
-                        16  // Fixed Length Content
-                   ) * _data.elementList.Count;
+            return FILENAME;
         }
     }
 }

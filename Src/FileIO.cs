@@ -5,9 +5,9 @@ namespace Heartache
 {
     class FileIO : IFile
     {
-        const string DEBUG_INPUT_DATA_PATH_OVERRIDE = @"C:\Projects\Underminer\data.win";
-        const string DEBUG_DUMP_PATH_OVERRIDE = @"C:\Undertale-exp\dump";
-        const string DEBUG_OUTPUT_DATA_PATH_OVERRIDE = @"C:\Projects\Underminer\data-r.win";
+        const string DEBUG_INPUT_DATA_PATH_OVERRIDE = "";//@"C:\Projects\Underminer\data.win";
+        const string DEBUG_DUMP_PATH_OVERRIDE = "";//@"C:\Undertale-exp\dump";
+        const string DEBUG_OUTPUT_DATA_PATH_OVERRIDE = "";//@"C:\Program Files (x86)\Steam\steamapps\common\Undertale\data.win";
 
         public static BinaryReader GetDataWinBinaryReader()
         {
@@ -22,6 +22,10 @@ namespace Heartache
         {
             string dataWinPath = _GetDataWinOutputPath();
 
+            if (File.Exists(dataWinPath))
+            {
+                File.Delete(dataWinPath);
+            }
             FileStream stream = new FileStream(dataWinPath, FileMode.OpenOrCreate);
             BinaryWriter writer = new BinaryWriter(stream);
 

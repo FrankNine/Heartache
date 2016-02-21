@@ -79,12 +79,12 @@ namespace Heartache.Chunk
 
         public void ResolveString(Strg stringChunk)
         {
-            elementList.ForEach(e => e.name = stringChunk.LookUpStringEntryByPosition(e.name.position));
+            //elementList.ForEach(e => e.name = stringChunk.LookUpStringEntryByPosition(e.name.position));
         }
 
         public void ResolveStringPosition(Strg stringChunk)
         {
-            elementList.ForEach(e => e.name = stringChunk.GetAdjustedStringPositionByIndex(e.name.index));
+            //elementList.ForEach(e => e.name = stringChunk.GetAdjustedStringPositionByIndex(e.name.index));
         }
 
         public override void Export(IFile fileSystem, string rootPath)

@@ -54,22 +54,6 @@ namespace Heartache.Chunk
             _data.unknown5 = BinaryStreamOperator.ReadBinary(reader, chunkSize - 104); 
         }
 
-        public void ResolveString(Strg stringChunk)
-        {
-            _data.string1 = stringChunk.LookUpStringEntryByPosition(_data.string1.position);
-            _data.string2 = stringChunk.LookUpStringEntryByPosition(_data.string2.position);
-            _data.string3 = stringChunk.LookUpStringEntryByPosition(_data.string3.position);
-            _data.string4 = stringChunk.LookUpStringEntryByPosition(_data.string4.position);
-        }
-
-        public void ResolveStringPosition(Strg stringChunk)
-        {
-            _data.string1 = stringChunk.GetAdjustedStringPositionByIndex(_data.string1.index);
-            _data.string2 = stringChunk.GetAdjustedStringPositionByIndex(_data.string2.index);
-            _data.string3 = stringChunk.GetAdjustedStringPositionByIndex(_data.string3.index);
-            _data.string4 = stringChunk.GetAdjustedStringPositionByIndex(_data.string4.index);
-        }
-
         public override void Export(IFile fileSystem,string rootPath)
         {
             string exportPath = GetFolder(rootPath);

@@ -100,18 +100,6 @@ namespace Heartache.Chunk
                     default: Console.WriteLine("Unhandled data!"); break;
                 }
             }
-
-            _ResolveStringIndex();
-        }
-
-        void _ResolveStringIndex()
-        {
-            gen8.ResolveString(strg);
-            font.ResolveString(strg);
-            func.ResolveString(strg);
-            objt.ResolveString(strg);
-            room.ResolveString(strg);
-            sprt.ResolveString(strg);
         }
 
         public override void Export(IFile fileSystem, string rootPath)
@@ -124,26 +112,7 @@ namespace Heartache.Chunk
             _allSubChunk.ForEach(c => c.Import(fileSystem, rootPath));
         }
 
-        public void RewriteStrings()
-        {
-            int strgChunkPosition =
-                4 + // FORM Tag 
-                4 + // FORM Size
-                _allSubChunk.TakeWhile(c => c != strg).Sum(c => c.GetChunkFullSize());
-            strg.RewriteAllStringPosition(strgChunkPosition);
-            _ResolveStringPosition();
-        }
-
-        void _ResolveStringPosition()
-        {
-            gen8.ResolveStringPosition(strg);
-            font.ResolveStringPosition(strg);
-            func.ResolveStringPosition(strg);
-            objt.ResolveStringPosition(strg);
-            room.ResolveStringPosition(strg);
-            sprt.ResolveStringPosition(strg);
-        }
-
+        const string con = "what is it?";
         public override void WriteBinary(BinaryWriter writer)
         {
             BinaryStreamOperator.WriteTag(writer, TAG);

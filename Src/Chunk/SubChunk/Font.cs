@@ -14,21 +14,27 @@ namespace Heartache.Chunk
 
         class Data
         {
-            public List<FontElement> fontElementList = new List<FontElement>();
+            public List<int> fontIndexList = new List<int>();
             public byte[] unknown;
 
-            public int GetSize()
+            public int GetSize(List<FontElement> fontElementList)
             {
-                return 4 + 4 * fontElementList.Count + fontElementList.Sum(f => f.GetSize()) + unknown.Length;
+                return 4 + 4 * fontIndexList.Count + fontElementList.Sum(f => f.GetSize()) + unknown.Length;
             }
         }
+        Data _data = new Data();
+
+        List<FontElement> _fontElementList = new List<FontElement>();
 
         public class FontElement
         {
             public StringEntry fontName = new StringEntry();
             public StringEntry fontFilename = new StringEntry();
-            public int _fontSize;
-            public byte[] _unknown;
+            public int fontSize;
+            public byte[] unknown1;
+            public int fontSpritePosition;
+            public FontSprite fontSprite = new FontSprite();
+            public byte[] unknown2;
 
             public List<Glyph> glyphList = new List<Glyph>();
 
@@ -36,8 +42,23 @@ namespace Heartache.Chunk
             {
                 fontName.position = BinaryStreamOperator.ReadPosition(reader);
                 fontFilename.position = BinaryStreamOperator.ReadPosition(reader);
-                _fontSize = BinaryStreamOperator.ReadSize(reader);
-                _unknown = BinaryStreamOperator.ReadBinary(reader, 28);
+                fontSize = BinaryStreamOperator.ReadSize(reader);
+                unknown1 = BinaryStreamOperator.ReadBinary(reader, 16);
+
+                fontSpritePosition = BinaryStreamOperator.ReadPosition(reader);
+                long currentPosition = reader.BaseStream.Position;
+
+                reader.BaseStream.Position = fontSpritePosition;
+                fontSprite.x = BinaryStreamOperator.ReadInt16(reader);
+                fontSprite.y = BinaryStreamOperator.ReadInt16(reader);
+                fontSprite.w = BinaryStreamOperator.ReadInt16(reader);
+                fontSprite.h = BinaryStreamOperator.ReadInt16(reader);
+                reader.BaseStream.Position += 12;
+                fontSprite.txtrIndex = BinaryStreamOperator.ReadInt16(reader);
+                reader.BaseStream.Position = currentPosition;
+
+                unknown2 = BinaryStreamOperator.ReadBinary(reader, 8);
+
                 int glyphCount = BinaryStreamOperator.ReadSize(reader);
 
                 int[] glyphPosition = new int[glyphCount];
@@ -60,18 +81,30 @@ namespace Heartache.Chunk
                 return StringEntry.GetStringPointerSize() + // fontName
                        StringEntry.GetStringPointerSize() + // fontFileName
                        sizeof(Int32) +                      // fontSize
-                       _unknown.Length +                    // Unknown Sector
+                       unknown1.Length +                    // Unknown Sector
+                       sizeof(Int32) +                      // SpriteFont Pointer
+                       unknown2.Length +                    // Unknown Sector
                        sizeof(Int32) +                      // Glyph Count
                        sizeof(Int32) * glyphList.Count +    // Glyph Pointer
                        Glyph.GetSize() * glyphList.Count;   // Glyph
             }
 
+            public int GetSizeWithSpriteFont()
+            {
+                return GetSize() + FontSprite.GetSize();
+            }
+
+            private long fontSpritePositionPosition;
             public void WriteBinary(BinaryWriter writer)
             {
                 writer.Write(fontName.position);
                 writer.Write(fontFilename.position);
-                writer.Write(_fontSize);
-                writer.Write(_unknown);
+                writer.Write(fontSize);
+                writer.Write(unknown1);
+                fontSpritePositionPosition = writer.BaseStream.Position;
+                writer.Write(fontSpritePosition);
+                writer.Write(unknown2);
+
                 writer.Write(glyphList.Count);
 
                 int currentPosition = (int)writer.BaseStream.Position;
@@ -82,6 +115,44 @@ namespace Heartache.Chunk
                     currentPosition += Glyph.GetSize();
                 });
                 glyphList.ForEach(g => g.WriteBinary(writer));
+            }
+
+           
+        }
+
+        public class FontSprite
+        {
+            public Int16 x;
+            public Int16 y;
+            public Int16 w;
+            public Int16 h;
+
+            public Int16 txtrIndex;
+
+            public static int GetSize()
+            {
+                return 22;
+            }
+
+            public void WriteFontSprite(BinaryWriter writer, int pointerPosition, int targetPosition)
+            {
+                long currentPosition = writer.BaseStream.Position;
+                writer.BaseStream.Position = targetPosition;
+
+                writer.Write(x);
+                writer.Write(y);
+                writer.Write(w);
+                writer.Write(h);
+                writer.Write(0);
+                writer.Write(w);
+                writer.Write(h);
+                writer.Write(w);
+                writer.Write(h);
+                writer.Write(txtrIndex);
+                writer.BaseStream.Position = pointerPosition;
+                writer.Write(targetPosition);
+
+                writer.BaseStream.Position = currentPosition;
             }
         }
 
@@ -123,7 +194,6 @@ namespace Heartache.Chunk
             }
         }
 
-        Data _data = new Data();
 
         public override void ParseBinary(BinaryReader reader)
         {
@@ -147,28 +217,12 @@ namespace Heartache.Chunk
                 reader.BaseStream.Seek(elementPosition, SeekOrigin.Begin);
                 var fontElement = new FontElement();
                 fontElement.ReadBinary(reader);
-                _data.fontElementList.Add(fontElement);
+
+                _data.fontIndexList.Add(i);
+                _fontElementList.Add(fontElement);
             }
 
             _data.unknown = BinaryStreamOperator.ReadBinary(reader, chunkStartingPosition + chunkSize - (int)reader.BaseStream.Position);
-        }
-
-        public void ResolveString(Strg stringChunk)
-        {
-            foreach (FontElement font in _data.fontElementList)
-            {
-                font.fontName = stringChunk.LookUpStringEntryByPosition(font.fontName.position);
-                font.fontFilename = stringChunk.LookUpStringEntryByPosition(font.fontFilename.position);
-            }
-        }
-
-        public void ResolveStringPosition(Strg stringChunk)
-        {
-            foreach (FontElement font in _data.fontElementList)
-            {
-                font.fontName = stringChunk.GetAdjustedStringPositionByIndex(font.fontName.index);
-                font.fontFilename = stringChunk.GetAdjustedStringPositionByIndex(font.fontFilename.index);
-            }
         }
 
         public override void Export(IFile fileSystem, string rootPath)
@@ -179,46 +233,60 @@ namespace Heartache.Chunk
             string exportFilePath = System.IO.Path.Combine(exportPath, INDEX_FILE_NAME);
             string fontJson = JsonConvert.SerializeObject(_data, Formatting.Indented);
             fileSystem.WriteText(exportFilePath, fontJson);
+
+            for (int i = 0; i < _fontElementList.Count; i++)
+            {
+                string exportElementPath = System.IO.Path.Combine(exportPath, i.ToString());
+                string fontElementJson = JsonConvert.SerializeObject(_fontElementList[i], Formatting.Indented);
+                fileSystem.WriteText(exportElementPath, fontElementJson);
+            }
         }
 
         public override string GetFolder(string rootPath)
         {
             return System.IO.Path.Combine(rootPath, TAG);
         }
-
+        
         public override void Import(IFile fileSystem, string rootPath)
         {
             string importPath = GetFolder(rootPath);
 
             string importFilePath = System.IO.Path.Combine(importPath, INDEX_FILE_NAME);
-            string fontJson = fileSystem.ReadText(importFilePath);
-            _data = JsonConvert.DeserializeObject<Data>(fontJson);
+            string fontIndexListJson = fileSystem.ReadText(importFilePath);
+            _data = JsonConvert.DeserializeObject<Data>(fontIndexListJson);
+
+            foreach(int fontIndex in _data.fontIndexList)
+            {
+                string elementPath = System.IO.Path.Combine(importPath, fontIndex.ToString());
+                string fontElementJson = fileSystem.ReadText(elementPath);
+                FontElement fontElement = JsonConvert.DeserializeObject<FontElement>(fontElementJson);
+                _fontElementList.Add(fontElement);
+            }
         }
 
         public override void WriteBinary(BinaryWriter writer)
         {
             BinaryStreamOperator.WriteTag(writer, TAG);
 
-            writer.Write(_data.GetSize());
-            writer.Write(_data.fontElementList.Count);
+            writer.Write(_data.GetSize(_fontElementList));
+            writer.Write(_data.fontIndexList.Count);
 
             int currentPosition = (int)writer.BaseStream.Position;
-            currentPosition += sizeof(Int32) * _data.fontElementList.Count;
+            currentPosition += sizeof(Int32) * _data.fontIndexList.Count;
 
-            _data.fontElementList.ForEach(f =>
+            _fontElementList.ForEach(f =>
             {
                 writer.Write(currentPosition);
                 currentPosition += f.GetSize();
             });
 
-            _data.fontElementList.ForEach(f => f.WriteBinary(writer));
-
+            _fontElementList.ForEach(f => f.WriteBinary(writer));
             writer.Write(_data.unknown);
         }
 
         public override int GetChunkContentSize()
         {
-            return _data.GetSize();
+            return _data.GetSize(_fontElementList);
         }
     }
 }
