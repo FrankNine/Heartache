@@ -4,25 +4,35 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 
+
+using Microsoft.VisualBasic.FileIO;
+
 namespace Heartache.Chunk
 {
     class ExtraStrg
     {
-        
-
         Dictionary<int, string> patchDict;
 
         public void Import(IFile fileSystem,
                            string originalExportedStrgPath,
-                           string translatedStrgPath)
+                           string translationCSVPath)
         {
             string strgFileContent = fileSystem.ReadText(originalExportedStrgPath);
 
             string[] originalStrings = strgFileContent.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
 
-            string translatedStrgFileContent = fileSystem.ReadText(translatedStrgPath);
-            string[] translatedStrings = translatedStrgFileContent.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
-
+            List<string> translatedStrings = new List<string>();
+            using (TextFieldParser parser = new TextFieldParser(translationCSVPath))
+            {
+                parser.TextFieldType = FieldType.Delimited;
+                parser.SetDelimiters(",");
+                while (!parser.EndOfData)
+                {                   
+                    string[] fields = parser.ReadFields();
+                    translatedStrings.Add(fields[1]);
+                }
+            }
+            
             patchDict = new Dictionary<int, string>();
             for(int i = 0; i < originalStrings.Length; i++)
             {

@@ -26,10 +26,10 @@ namespace Heartache
 
 
 
-        public static void Disassemble()
+        public static void Disassemble(string dataWinPath,
+                                       string disassembledDataPath)
         {
-            BinaryReader reader = FileIO.GetDataWinBinaryReader();
-            string outputPath = FileIO.GetDumpFolderPath();
+            BinaryReader reader = FileIO.GetDataWinBinaryReader(dataWinPath);
 
             // Main Chunk FORM
             string mainChunkTag = BinaryStreamOperator.ReadChunkTag(reader);
@@ -42,16 +42,26 @@ namespace Heartache
             int formChunkSize = BinaryStreamOperator.ReadSize(reader);
             Console.WriteLine("FORM chunk size: " + formChunkSize);
 
+            var fileIO = new FileIO();
+
+            if (!fileIO.IsDirectoryEmpty(disassembledDataPath))
+            {
+                fileIO.EmptyDirectory(disassembledDataPath);
+            }
+
             form.ParseBinary(reader);
-            form.Export(new FileIO(), outputPath);
+            form.Export(fileIO, disassembledDataPath);
 
             reader.Dispose();
         }
 
-        public static void Assemble()
+        public static void Assemble(string disassembledDataPath,
+                                    string translationCSVPath,
+                                    string translatedDataWinPath,
+                                    string replaceFontPath)
         {
-            form.Import(new FileIO(), FileIO.GetDumpFolderPath());
-            BinaryWriter writer = FileIO.GetDataWinBinaryWriter();
+            form.Import(new FileIO(), disassembledDataPath, translationCSVPath, replaceFontPath);
+            BinaryWriter writer = FileIO.GetDataWinBinaryWriter(translatedDataWinPath);
             form.WriteBinary(writer);
             writer.Dispose();
         }

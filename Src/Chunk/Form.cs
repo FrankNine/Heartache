@@ -111,19 +111,27 @@ namespace Heartache.Chunk
         const string TRANSLATED_FILENAME = "Strg-t.txt";
         ExtraStrg exStrg = new ExtraStrg();
 
-        ExtraFont exFont = new ExtraFont();
+
         public override void Import(IFile fileSystem, string rootPath)
+        {
+            throw new NotImplementedException();
+        }
+
+        ExtraFont exFont = new ExtraFont();
+        public void Import(IFile fileSystem, 
+                           string rootPath,
+                           string translationCSVPath,
+                           string replaceFontPath)
         {
             _allSubChunk.ForEach(c => c.Import(fileSystem, rootPath));
 
             string strgPath = System.IO.Path.Combine(strg.GetFolder(rootPath), INDEX_FILENAME);
-            string exstrgPath = System.IO.Path.Combine(strg.GetFolder(rootPath), TRANSLATED_FILENAME);
-            exStrg.Import(fileSystem, strgPath, exstrgPath);
 
-            exFont.Import(fileSystem, System.IO.Path.Combine(rootPath, "EXFONT"), "index.txt");
+            exStrg.Import(fileSystem, strgPath, translationCSVPath);
+
+            exFont.Import(fileSystem, replaceFontPath, "index.txt");
         }
 
-        const string con = "what is it?";
         public override void WriteBinary(BinaryWriter writer)
         {
             BinaryStreamOperator.WriteTag(writer, TAG);

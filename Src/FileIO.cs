@@ -1,27 +1,20 @@
 ﻿using System.IO;
-using System.Windows.Forms;
+using System.Linq;
 
 namespace Heartache
 {
     class FileIO : IFile
     {
-        const string DEBUG_INPUT_DATA_PATH_OVERRIDE = "";//@"C:\Projects\Underminer\data.win";
-        const string DEBUG_DUMP_PATH_OVERRIDE = @"C:\Undertale-exp\dump";
-        const string DEBUG_OUTPUT_DATA_PATH_OVERRIDE = @"C:\Program Files (x86)\Steam\steamapps\common\Undertale\data.win";
-
-        public static BinaryReader GetDataWinBinaryReader()
+        public static BinaryReader GetDataWinBinaryReader(string dataWinPath)
         {
-            string dataWinPath = _GetDataWinInputPath();
             FileStream stream = new FileStream(dataWinPath, FileMode.Open);
             BinaryReader reader = new BinaryReader(stream);
 
             return reader;
         }
 
-        public static BinaryWriter GetDataWinBinaryWriter()
+        public static BinaryWriter GetDataWinBinaryWriter(string dataWinPath)
         {
-            string dataWinPath = _GetDataWinOutputPath();
-
             if (File.Exists(dataWinPath))
             {
                 File.Delete(dataWinPath);
@@ -32,40 +25,16 @@ namespace Heartache
             return writer;
         }
 
-        static string _GetDataWinInputPath()
+        public bool IsDirectoryEmpty(string path)
         {
-            if (!string.IsNullOrEmpty(DEBUG_INPUT_DATA_PATH_OVERRIDE))
-            {
-                return DEBUG_INPUT_DATA_PATH_OVERRIDE;
-            }
-
-            OpenFileDialog fileDialog = new OpenFileDialog();
-            fileDialog.ShowDialog();
-            return fileDialog.FileName;
+            return !Directory.EnumerateFileSystemEntries(path).Any();
         }
 
-        static string _GetDataWinOutputPath()
+        public void EmptyDirectory(string path)
         {
-            if (!string.IsNullOrEmpty(DEBUG_OUTPUT_DATA_PATH_OVERRIDE))
-            {
-                return DEBUG_OUTPUT_DATA_PATH_OVERRIDE;
-            }
-
-            OpenFileDialog fileDialog = new OpenFileDialog();
-            fileDialog.ShowDialog();
-            return fileDialog.FileName;
-        }
-
-        public static string GetDumpFolderPath()
-        {
-            if (!string.IsNullOrEmpty(DEBUG_DUMP_PATH_OVERRIDE))
-            {
-                return DEBUG_DUMP_PATH_OVERRIDE;
-            }
-
-            FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
-            folderBrowserDialog.ShowDialog();
-            return folderBrowserDialog.SelectedPath;
+            var directory = Directory.CreateDirectory(path);
+            foreach (FileInfo file in directory.GetFiles()) file.Delete();
+            foreach (DirectoryInfo subDirectory in directory.GetDirectories()) subDirectory.Delete(true);
         }
 
         public void CreateDirectoryWithoutReadOnly(string path)

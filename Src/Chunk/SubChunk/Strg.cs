@@ -1,10 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Collections.Generic;
 
 using Heartache.Primitive;
-using System.Text;
 
 namespace Heartache.Chunk
 {
@@ -13,8 +13,6 @@ namespace Heartache.Chunk
     {
         const string TAG = "STRG";
         const string INDEX_FILENAME = "Strg.txt";
-        const string TRANSLATED_FILENAME = "Strg-t.txt";
-        const string EXTRA_FONT_FOLDER = "EXFONT";
 
         class Data
         {

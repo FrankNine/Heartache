@@ -58,5 +58,29 @@ namespace Heartache {
                 this["TranslatedDataWinPath"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string TranslationCSVPath {
+            get {
+                return ((string)(this["TranslationCSVPath"]));
+            }
+            set {
+                this["TranslationCSVPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ReplaceFontChunksPath {
+            get {
+                return ((string)(this["ReplaceFontChunksPath"]));
+            }
+            set {
+                this["ReplaceFontChunksPath"] = value;
+            }
+        }
     }
 }
