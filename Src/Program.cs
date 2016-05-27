@@ -1,22 +1,32 @@
 ﻿using System;
 using System.IO;
 
-using Heartache.Chunk;
-
 namespace Heartache
 {
     class Program
     {
-        static Form form = new Form();
+        static Chunk.Form form = new Chunk.Form();
+
+        static UI.Heartache heartacheUI = null;
 
         [STAThread]
         static void Main(string[] args)
         {
-            //Disassemble();
-            Reassemble();
+            System.Windows.Forms.Application.ApplicationExit += new EventHandler(OnApplicationExit);
+
+            heartacheUI = new UI.Heartache();
+            System.Windows.Forms.Application.Run(heartacheUI);
         }
 
-        static void Disassemble()
+        static void OnApplicationExit(object o, EventArgs e)
+        {
+            HeartacheSettings.Default.Save();
+        }
+
+
+
+
+        public static void Disassemble()
         {
             BinaryReader reader = FileIO.GetDataWinBinaryReader();
             string outputPath = FileIO.GetDumpFolderPath();
@@ -38,7 +48,7 @@ namespace Heartache
             reader.Dispose();
         }
 
-        static void Reassemble()
+        public static void Assemble()
         {
             form.Import(new FileIO(), FileIO.GetDumpFolderPath());
             BinaryWriter writer = FileIO.GetDataWinBinaryWriter();
