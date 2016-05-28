@@ -40,28 +40,30 @@ namespace Heartache.Chunk
         private List<Chunk> _allSubChunk = new List<Chunk>();
         public Form()
         {
-            _allSubChunk.Add(gen8);
-            _allSubChunk.Add(optn);
-            _allSubChunk.Add(extn);
-            _allSubChunk.Add(sond);
-            _allSubChunk.Add(agrp);
-            _allSubChunk.Add(sprt);
-            _allSubChunk.Add(bgnd);
-            _allSubChunk.Add(path);
-            _allSubChunk.Add(scpt);
-            _allSubChunk.Add(shdr);
-            _allSubChunk.Add(font);
-            _allSubChunk.Add(tmln);
-            _allSubChunk.Add(objt);
-            _allSubChunk.Add(room);
-            _allSubChunk.Add(dafl);
-            _allSubChunk.Add(tpag);
-            _allSubChunk.Add(code);
-            _allSubChunk.Add(vari);
-            _allSubChunk.Add(func);
-            _allSubChunk.Add(strg);
-            _allSubChunk.Add(txtr);
-            _allSubChunk.Add(audo);
+            _allSubChunk = new List<Chunk> {
+                gen8,
+                optn,
+                extn,
+                sond,
+                agrp,
+                sprt,
+                bgnd,
+                path,
+                scpt,
+                shdr,
+                font,
+                tmln,
+                objt,
+                room,
+                dafl,
+                tpag,
+                code,
+                vari,
+                func,
+                strg,
+                txtr,
+                audo
+            };
         }
 
         public override string GetFolder(string rootPath)
@@ -76,33 +78,33 @@ namespace Heartache.Chunk
             while (reader.BaseStream.Position != reader.BaseStream.Length)
             {
                 string chunkTag = BinaryStreamOperator.ReadChunkTag(reader, ref readByte);
-                Console.WriteLine(chunkTag);
+
                 switch (chunkTag)
                 {
-                    case "GEN8": gen8.ParseBinary(reader); break;
-                    case "OPTN": optn.ParseBinary(reader); break;
-                    case "EXTN": extn.ParseBinary(reader); break;
-                    case "SOND": sond.ParseBinary(reader); break;
-                    case "AGRP": agrp.ParseBinary(reader); break;
-                    case "SPRT": sprt.ParseBinary(reader); break;
-                    case "BGND": bgnd.ParseBinary(reader); break;
-                    case "PATH": path.ParseBinary(reader); break;
-                    case "SCPT": scpt.ParseBinary(reader); break;
-                    case "SHDR": shdr.ParseBinary(reader); break;
-                    case "FONT": font.ParseBinary(reader); break;
-                    case "TMLN": tmln.ParseBinary(reader); break;
-                    case "OBJT": objt.ParseBinary(reader); break;
-                    case "ROOM": room.ParseBinary(reader); break;
-                    case "DAFL": dafl.ParseBinary(reader); break;
-                    case "TPAG": tpag.ParseBinary(reader); break;
-                    case "CODE": code.ParseBinary(reader); break;
-                    case "VARI": vari.ParseBinary(reader); break;
-                    case "FUNC": func.ParseBinary(reader); break;
-                    case "STRG": strg.ParseBinary(reader); break;
-                    case "TXTR": txtr.ParseBinary(reader); break;
-                    case "AUDO": audo.ParseBinary(reader); break;
+                    case Gen8.TAG: gen8.ParseBinary(reader); break;
+                    case Optn.TAG: optn.ParseBinary(reader); break;
+                    case Extn.TAG: extn.ParseBinary(reader); break;
+                    case Sond.TAG: sond.ParseBinary(reader); break;
+                    case Agrp.TAG: agrp.ParseBinary(reader); break;
+                    case Sprt.TAG: sprt.ParseBinary(reader); break;
+                    case Bgnd.TAG: bgnd.ParseBinary(reader); break;
+                    case Path.TAG: path.ParseBinary(reader); break;
+                    case Scpt.TAG: scpt.ParseBinary(reader); break;
+                    case Shdr.TAG: shdr.ParseBinary(reader); break;
+                    case Font.TAG: font.ParseBinary(reader); break;
+                    case Tmln.TAG: tmln.ParseBinary(reader); break;
+                    case Objt.TAG: objt.ParseBinary(reader); break;
+                    case Room.TAG: room.ParseBinary(reader); break;
+                    case Dafl.TAG: dafl.ParseBinary(reader); break;
+                    case Tpag.TAG: tpag.ParseBinary(reader); break;
+                    case Code.TAG: code.ParseBinary(reader); break;
+                    case Vari.TAG: vari.ParseBinary(reader); break;
+                    case Func.TAG: func.ParseBinary(reader); break;
+                    case Strg.TAG: strg.ParseBinary(reader); break;
+                    case Txtr.TAG: txtr.ParseBinary(reader); break;
+                    case Audo.TAG: audo.ParseBinary(reader); break;
 
-                    default: Console.WriteLine("Unhandled data!"); break;
+                    default: break;
                 }
             }
         }
@@ -111,18 +113,15 @@ namespace Heartache.Chunk
         {
             _allSubChunk.ForEach(c => c.Export(fileSystem, rootPath));
         }
-
-        const string INDEX_FILENAME = "Strg.txt";
-        const string TRANSLATED_FILENAME = "Strg-t.txt";
-        ExtraStrg exStrg = new ExtraStrg();
-
-
+        
         public override void Import(IFile fileSystem, string rootPath)
         {
             throw new NotImplementedException();
         }
 
+        ExtraStrg exStrg = new ExtraStrg();
         ExtraFont exFont = new ExtraFont();
+
         public void Import(IFile fileSystem, 
                            string rootPath,
                            string translationCSVPath,
@@ -130,11 +129,8 @@ namespace Heartache.Chunk
         {
             _allSubChunk.ForEach(c => c.Import(fileSystem, rootPath));
 
-            string strgPath = System.IO.Path.Combine(strg.GetFolder(rootPath), INDEX_FILENAME);
-
+            exFont.Import(fileSystem, replaceFontPath, Font.INDEX_FILE_NAME);
             exStrg.Import(translationCSVPath);
-
-            exFont.Import(fileSystem, replaceFontPath, "index.txt");
         }
 
         public override void WriteBinary(BinaryWriter writer)

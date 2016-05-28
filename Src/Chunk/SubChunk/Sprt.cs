@@ -2,7 +2,7 @@
 {
     class Sprt : WholeChunk
     {
-        const string TAG = "SPRT";
+        public const string TAG = "SPRT";
         const string INDEX_FILENAME = "index.txt";
 
         protected override string GetTag()

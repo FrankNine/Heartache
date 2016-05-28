@@ -9,7 +9,7 @@ namespace Heartache.Chunk
 {
     class Txtr : Chunk
     {
-        const string TAG = "TXTR";
+        public const string TAG = "TXTR";
         const string INDEX_FILENAME = "index.txt";
         List<byte[]> elementList = new List<byte[]>();
 

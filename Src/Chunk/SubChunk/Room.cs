@@ -2,7 +2,7 @@
 {
     class Room : WholeChunk
     {
-        const string TAG = "ROOM";
+        public const string TAG = "ROOM";
         const string INDEX_FILENAME = "index.txt";
 
         protected override string GetTag()

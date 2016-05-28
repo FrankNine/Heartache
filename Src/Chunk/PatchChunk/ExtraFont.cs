@@ -1,7 +1,8 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
+using System.Collections.Generic;
+
+using Newtonsoft.Json;
 
 namespace Heartache.Chunk
 {
@@ -15,9 +16,10 @@ namespace Heartache.Chunk
         {
             string indexPath = System.IO.Path.Combine(extraFontFolderPath, indexFilename);
             string indexJsonContent = fileSystem.ReadText(indexPath);
-            //List<int> extraFontIndexList = JsonConvert.DeserializeObject<List<int>>(indexJsonContent);
+
             List<int> extraFontIndexList = new List<int> { 2 };
             patchDict = new Dictionary<int, Font.FontElement>();
+
             foreach (int exfontIndex in extraFontIndexList)
             {
                 string exfontFilePath = System.IO.Path.Combine(extraFontFolderPath, exfontIndex.ToString());

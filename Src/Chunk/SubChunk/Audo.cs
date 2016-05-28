@@ -8,9 +8,10 @@ namespace Heartache.Chunk
 {
     class Audo : Chunk
     {
-        List<byte[]> audioList = new List<byte[]>();
-        const string TAG = "AUDO";
+        public const string TAG = "AUDO";
         const string INDEX_FILENAME = "index.txt";
+
+        List<byte[]> audioList = new List<byte[]>();
 
         class Data
         {

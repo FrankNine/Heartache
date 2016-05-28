@@ -25,6 +25,12 @@ namespace Heartache
         }
 
 
+        public static void InjectGlyphRangeToFontSettings(string glyphGameMakerProjectPath)
+        {
+
+        }
+
+
         public static void GenerateReplaceFontChunks(string glyphGameMakerProjectPath,
                                                      string gameMakerAssetComilerPath,
                                                      string gameMakerBuildTargetPath,

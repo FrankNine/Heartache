@@ -1,16 +1,18 @@
-﻿using Heartache.Primitive;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
 using System.Linq;
+using System.Collections.Generic;
+
+using Newtonsoft.Json;
+
+using Heartache.Primitive;
 
 namespace Heartache.Chunk
 {
     public class Font : Chunk
     {
-        const string TAG = "FONT";
-        const string INDEX_FILE_NAME = "Index.txt";
+        public const string TAG = "FONT";
+        public const string INDEX_FILE_NAME = "Index.txt";
 
         class Data
         {

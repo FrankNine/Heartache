@@ -11,7 +11,7 @@ namespace Heartache.Chunk
 
     class Strg : Chunk
     {
-        const string TAG = "STRG";
+        public const string TAG = "STRG";
         const string INDEX_FILENAME = "Strg.txt";
 
         class Data
