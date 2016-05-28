@@ -13,35 +13,28 @@ namespace Heartache.Chunk
     {
         Dictionary<int, string> patchDict;
 
-        public void Import(IFile fileSystem,
-                           string originalExportedStrgPath,
-                           string translationCSVPath)
+        public void Import(string translationCSVPath)
         {
-            string strgFileContent = fileSystem.ReadText(originalExportedStrgPath);
+            patchDict = new Dictionary<int, string>();
 
-            string[] originalStrings = strgFileContent.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
-
-            List<string> translatedStrings = new List<string>();
             using (TextFieldParser parser = new TextFieldParser(translationCSVPath))
             {
                 parser.TextFieldType = FieldType.Delimited;
                 parser.SetDelimiters(",");
+                parser.ReadFields(); // Skip header
+
+                int i = 0;
+
                 while (!parser.EndOfData)
                 {                   
                     string[] fields = parser.ReadFields();
-                    translatedStrings.Add(fields[1]);
-                }
-            }
-            
-            patchDict = new Dictionary<int, string>();
-            for(int i = 0; i < originalStrings.Length; i++)
-            {
-                string originalString = originalStrings[i];
-                string translatedString = translatedStrings[i];
-
-                if (!string.Equals(originalString, translatedString))
-                {
-                    patchDict.Add(i, translatedString);
+                    string translatedString = fields[1];
+                    if (!string.IsNullOrEmpty(translatedString))
+                    {
+                        patchDict.Add(i, fields[1]);
+                    }
+                    
+                    i++;
                 }
             }
         }
