@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Heartache.Chunk
 {
-    class Font : Chunk
+    public class Font : Chunk
     {
         const string TAG = "FONT";
         const string INDEX_FILE_NAME = "Index.txt";

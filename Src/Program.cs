@@ -30,8 +30,6 @@ namespace Heartache
                                                      string gameMakerBuildTargetPath,
                                                      string replaceFontChunksOutputPath)
         {
-            Process process = new Process();
-
             var gameMakerProcess = new ProcessStartInfo();
 
             gameMakerProcess.UseShellExecute = true;
@@ -42,7 +40,17 @@ namespace Heartache
                 gameMakerBuildTargetPath,
                 glyphGameMakerProjectPath);
 
-            Process.Start(gameMakerProcess);
+            Process process = Process.Start(gameMakerProcess);
+            process.WaitForExit();
+
+
+            string fontDataWinPath = Path.Combine(gameMakerBuildTargetPath, "UndertaleGlyph.win");
+            BinaryReader reader = FileIO.GetDataWinBinaryReader(fontDataWinPath);
+            Chunk.Form fontDataWinForm = new Chunk.Form();
+            fontDataWinForm.ParseBinary(reader);
+
+            Chunk.Font font = fontDataWinForm.GetFont();
+            font.Export(new FileIO(), replaceFontChunksOutputPath);
         }
 
         public static void Disassemble(string dataWinPath,

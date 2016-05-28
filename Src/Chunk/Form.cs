@@ -32,6 +32,11 @@ namespace Heartache.Chunk
         Txtr txtr = new Txtr();
         Audo audo = new Audo();
 
+        public Font GetFont()
+        {
+            return font;
+        }
+
         private List<Chunk> _allSubChunk = new List<Chunk>();
         public Form()
         {
