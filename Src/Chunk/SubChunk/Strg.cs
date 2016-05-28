@@ -8,8 +8,7 @@ using Heartache.Primitive;
 
 namespace Heartache.Chunk
 {
-
-    class Strg : Chunk
+    public class Strg : Chunk
     {
         public const string TAG = "STRG";
         const string INDEX_FILENAME = "Strg.txt";

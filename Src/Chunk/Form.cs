@@ -111,6 +111,7 @@ namespace Heartache.Chunk
 
         public override void Export(IFile fileSystem, string rootPath)
         {
+            font.ResolveFontName(strg);
             _allSubChunk.ForEach(c => c.Export(fileSystem, rootPath));
         }
         

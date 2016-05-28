@@ -227,6 +227,15 @@ namespace Heartache.Chunk
             _data.unknown = BinaryStreamOperator.ReadBinary(reader, chunkStartingPosition + chunkSize - (int)reader.BaseStream.Position);
         }
 
+        public void ResolveFontName(Strg strgChunk)
+        {
+            foreach(var fontElement in _fontElementList)
+            {
+                fontElement.fontName = strgChunk.LookUpStringEntryByPosition(fontElement.fontName.position);
+                fontElement.fontFilename = strgChunk.LookUpStringEntryByPosition(fontElement.fontFilename.position);
+            }
+        }
+
         public override void Export(IFile fileSystem, string rootPath)
         {
             string exportPath = GetFolder(rootPath);
