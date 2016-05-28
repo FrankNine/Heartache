@@ -144,9 +144,9 @@ namespace Heartache.UI
 
         private void buttonOpenUndertaleGameMakerProjectPath_Click(object sender, EventArgs e)
         {
-            FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
-            folderBrowserDialog.ShowDialog();
-            textBoxUndertaleGameMakerProjectPath.Text = folderBrowserDialog.SelectedPath;
+            OpenFileDialog fileDialog = new OpenFileDialog();
+            fileDialog.ShowDialog();
+            textBoxUndertaleGameMakerProjectPath.Text = fileDialog.FileName;
         }
 
         private void buttonOpenGameMakerAssetCompilerPath_Click(object sender, EventArgs e)
