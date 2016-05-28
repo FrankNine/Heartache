@@ -132,7 +132,7 @@ namespace Heartache.Chunk
 
             string strgPath = System.IO.Path.Combine(strg.GetFolder(rootPath), INDEX_FILENAME);
 
-            exStrg.Import(fileSystem, strgPath, translationCSVPath);
+            exStrg.Import(translationCSVPath);
 
             exFont.Import(fileSystem, replaceFontPath, "index.txt");
         }
