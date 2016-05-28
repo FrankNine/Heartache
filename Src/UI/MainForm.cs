@@ -20,15 +20,32 @@ namespace Heartache.UI
             get { return textBoxTranslationCSVPath.Text; }
         }
 
-        public string TranslatedDataWinPath
+        public string UndertaleGameMakerProjectPath
         {
-            get { return textBoxTranslatedDataWinPath.Text; }
+            get { return textBoxUndertaleGameMakerProjectPath.Text; }
+        }
+
+        public string GameMakerAssetCompilerPath
+        {
+            get { return textBoxGameMakerAssetCompilerPath.Text; }
+        }
+
+        public string GameMakerBuildTargetPath
+        {
+            get { return textBoxGameMakerBuildTargetPath.Text; }
         }
 
         public string ReplaceFontChunksPath
         {
             get { return textBoxReplaceFontChunksPath.Text; }
         }
+
+        public string TranslatedDataWinPath
+        {
+            get { return textBoxTranslatedDataWinPath.Text; }
+        }
+
+        
 
 
 
@@ -42,6 +59,14 @@ namespace Heartache.UI
         private void buttonDisassemble_Click(object sender, EventArgs e)
         {
             Program.Disassemble(DataWinPath, DisassembledDataPath);
+        }
+
+        private void buttonGenerateFontChunks_Click(object sender, EventArgs e)
+        {
+            Program.GenerateReplaceFontChunks(UndertaleGameMakerProjectPath,
+                                              GameMakerAssetCompilerPath,
+                                              GameMakerBuildTargetPath,
+                                              ReplaceFontChunksPath);
         }
 
         private void buttonAssemble_Click(object sender, EventArgs e)
@@ -67,6 +92,21 @@ namespace Heartache.UI
         private void textBoxTranslationCSVPath_TextChanged(object sender, EventArgs e)
         {
             HeartacheSettings.Default.TranslationCSVPath = textBoxTranslationCSVPath.Text;
+        }
+
+        private void textBoxUndertaleGameMakerProjectPath_TextChanged(object sender, EventArgs e)
+        {
+            HeartacheSettings.Default.UndertaleGlyphGameMakerProjectPath = textBoxUndertaleGameMakerProjectPath.Text;
+        }
+
+        private void textBoxGameMakerAssetComplerPath_TextChanged(object sender, EventArgs e)
+        {
+            HeartacheSettings.Default.GameMakerAssetCompilerPath = textBoxGameMakerAssetCompilerPath.Text;
+        }
+
+        private void textBoxGameMakerBuildTargetPath_TextChanged(object sender, EventArgs e)
+        {
+            HeartacheSettings.Default.GameMakerBuildTargetPath = textBoxGameMakerBuildTargetPath.Text;
         }
 
         private void textBoxReplaceFontChunksPath_TextChanged(object sender, EventArgs e)
@@ -102,6 +142,27 @@ namespace Heartache.UI
             textBoxTranslationCSVPath.Text = fileDialog.FileName;
         }
 
+        private void buttonOpenUndertaleGameMakerProjectPath_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
+            folderBrowserDialog.ShowDialog();
+            textBoxUndertaleGameMakerProjectPath.Text = folderBrowserDialog.SelectedPath;
+        }
+
+        private void buttonOpenGameMakerAssetCompilerPath_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog fileDialog = new OpenFileDialog();
+            fileDialog.ShowDialog();
+            textBoxGameMakerAssetCompilerPath.Text = fileDialog.FileName;
+        }
+
+        private void buttonOpenGameMakerBuildTargetPath_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
+            folderBrowserDialog.ShowDialog();
+            textBoxGameMakerBuildTargetPath.Text = folderBrowserDialog.SelectedPath;
+        }
+        
         private void buttonOpenReplaceFontChunksPath_Click(object sender, EventArgs e)
         {
             FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
@@ -116,5 +177,7 @@ namespace Heartache.UI
             fileDialog.ShowDialog();
             textBoxTranslatedDataWinPath.Text = fileDialog.FileName;
         }
+
+        
     }
 }

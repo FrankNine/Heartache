@@ -82,5 +82,41 @@ namespace Heartache {
                 this["ReplaceFontChunksPath"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string GameMakerAssetCompilerPath {
+            get {
+                return ((string)(this["GameMakerAssetCompilerPath"]));
+            }
+            set {
+                this["GameMakerAssetCompilerPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string UndertaleGlyphGameMakerProjectPath {
+            get {
+                return ((string)(this["UndertaleGlyphGameMakerProjectPath"]));
+            }
+            set {
+                this["UndertaleGlyphGameMakerProjectPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string GameMakerBuildTargetPath {
+            get {
+                return ((string)(this["GameMakerBuildTargetPath"]));
+            }
+            set {
+                this["GameMakerBuildTargetPath"] = value;
+            }
+        }
     }
 }

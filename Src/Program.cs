@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 
 namespace Heartache
@@ -24,7 +25,25 @@ namespace Heartache
         }
 
 
+        public static void GenerateReplaceFontChunks(string glyphGameMakerProjectPath,
+                                                     string gameMakerAssetComilerPath,
+                                                     string gameMakerBuildTargetPath,
+                                                     string replaceFontChunksOutputPath)
+        {
+            Process process = new Process();
 
+            var gameMakerProcess = new ProcessStartInfo();
+
+            gameMakerProcess.UseShellExecute = true;
+            gameMakerProcess.FileName = gameMakerAssetComilerPath;
+            gameMakerProcess.WorkingDirectory = Path.GetDirectoryName(gameMakerAssetComilerPath);
+
+            gameMakerProcess.Arguments = string.Format(@"/c /m=win  /config=""Default"" /tgt=64 /obob=True /obpp=False /obru=True /obes=False /i=3 /cvm /tp=2048 /mv=1 /iv=0 /rv=0 /bv=1757 /gn=""UndertaleGlyph"" /td=""C:\Users\franknine\AppData\Local"" /cd=""C:\Users\franknine\Documents\GameMaker\Cache"" /sh=True /dbgp=""6502"" /hip=""127.0.0.1"" /hprt=""51268"" /o=""{0}"" ""{1}""",
+                gameMakerBuildTargetPath,
+                glyphGameMakerProjectPath);
+
+            Process.Start(gameMakerProcess);
+        }
 
         public static void Disassemble(string dataWinPath,
                                        string disassembledDataPath)
