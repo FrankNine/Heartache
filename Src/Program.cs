@@ -1,6 +1,10 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
+using System.Diagnostics;
+
+using Microsoft.VisualBasic.FileIO;
+using System.Collections.Generic;
+using System.Xml;
 
 namespace Heartache
 {
@@ -24,10 +28,57 @@ namespace Heartache
             HeartacheSettings.Default.Save();
         }
 
-
-        public static void InjectGlyphRangeToFontSettings(string glyphGameMakerProjectPath)
+        static Dictionary<string, string> customFontMapping = new Dictionary<string, string>
         {
+            { "2", "fnt_maintext_2" }
+        };
 
+        static Dictionary<string, HashSet<char>> customFontCharacterSet = new Dictionary<string, HashSet<char>>
+        {
+            { "2", new HashSet<char> { } }
+        };
+
+        public static void InjectGlyphRangeToFontSettings(string glyphGameMakerProjectPath,
+                                                          string translationCSVPath)
+        {
+            using (TextFieldParser parser = new TextFieldParser(translationCSVPath))
+            {
+                parser.TextFieldType = FieldType.Delimited;
+                parser.SetDelimiters(",");
+                parser.ReadFields(); // Skip header
+
+                while (!parser.EndOfData)
+                {
+                    string[] fields = parser.ReadFields();
+                    string translatedString = fields[1];
+                    string translationFont = fields[2];
+                    if (!string.IsNullOrEmpty(translatedString))
+                    {
+                        foreach (char c in translatedString.ToCharArray())
+                        {
+                            customFontCharacterSet[translationFont].Add(c);
+                        }
+                    }
+                }
+            }
+
+            string fontFolderPath = Path.Combine(Path.GetDirectoryName(glyphGameMakerProjectPath), "fonts");
+            string fontFilePath = Path.Combine(fontFolderPath, string.Format("{0}.font.gmx", customFontMapping["2"]));
+
+            XmlDocument doc = new XmlDocument();
+            doc.Load(fontFilePath);
+            XmlNode root = doc.DocumentElement;
+            XmlNode rangesNode = root.SelectSingleNode("/font/ranges");
+
+            foreach (char c in customFontCharacterSet["2"])
+            {
+                XmlElement elem = doc.CreateElement("range0");
+                int charDecValue = ((int)c);
+                elem.InnerText = string.Format("{0},{1}", charDecValue, charDecValue);
+                rangesNode.AppendChild(elem);
+             }
+
+            doc.Save(fontFilePath);
         }
 
 

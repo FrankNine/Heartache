@@ -56,6 +56,7 @@
             this.textBoxTranslatedDataWinPath = new System.Windows.Forms.TextBox();
             this.textBoxDisassembledDataPath = new System.Windows.Forms.TextBox();
             this.textBoxDataWinPath = new System.Windows.Forms.TextBox();
+            this.buttonInjectCharacter = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // buttonAssemble
@@ -157,7 +158,7 @@
             // labelReplaceFontChunksPath
             // 
             this.labelReplaceFontChunksPath.AutoSize = true;
-            this.labelReplaceFontChunksPath.Location = new System.Drawing.Point(8, 331);
+            this.labelReplaceFontChunksPath.Location = new System.Drawing.Point(8, 358);
             this.labelReplaceFontChunksPath.Name = "labelReplaceFontChunksPath";
             this.labelReplaceFontChunksPath.Size = new System.Drawing.Size(128, 12);
             this.labelReplaceFontChunksPath.TabIndex = 15;
@@ -165,7 +166,7 @@
             // 
             // buttonOpenReplaceFontChunksPath
             // 
-            this.buttonOpenReplaceFontChunksPath.Location = new System.Drawing.Point(413, 346);
+            this.buttonOpenReplaceFontChunksPath.Location = new System.Drawing.Point(413, 373);
             this.buttonOpenReplaceFontChunksPath.Name = "buttonOpenReplaceFontChunksPath";
             this.buttonOpenReplaceFontChunksPath.Size = new System.Drawing.Size(75, 23);
             this.buttonOpenReplaceFontChunksPath.TabIndex = 17;
@@ -176,7 +177,7 @@
             // labelGameMakerProjectPath
             // 
             this.labelGameMakerProjectPath.AutoSize = true;
-            this.labelGameMakerProjectPath.Location = new System.Drawing.Point(8, 211);
+            this.labelGameMakerProjectPath.Location = new System.Drawing.Point(8, 191);
             this.labelGameMakerProjectPath.Name = "labelGameMakerProjectPath";
             this.labelGameMakerProjectPath.Size = new System.Drawing.Size(203, 12);
             this.labelGameMakerProjectPath.TabIndex = 18;
@@ -184,7 +185,7 @@
             // 
             // buttonOpenUndertaleGameMakerProjectPath
             // 
-            this.buttonOpenUndertaleGameMakerProjectPath.Location = new System.Drawing.Point(413, 226);
+            this.buttonOpenUndertaleGameMakerProjectPath.Location = new System.Drawing.Point(413, 205);
             this.buttonOpenUndertaleGameMakerProjectPath.Name = "buttonOpenUndertaleGameMakerProjectPath";
             this.buttonOpenUndertaleGameMakerProjectPath.Size = new System.Drawing.Size(75, 23);
             this.buttonOpenUndertaleGameMakerProjectPath.TabIndex = 20;
@@ -195,7 +196,7 @@
             // labelGameMakerAssetComplerPath
             // 
             this.labelGameMakerAssetComplerPath.AutoSize = true;
-            this.labelGameMakerAssetComplerPath.Location = new System.Drawing.Point(8, 251);
+            this.labelGameMakerAssetComplerPath.Location = new System.Drawing.Point(8, 278);
             this.labelGameMakerAssetComplerPath.Name = "labelGameMakerAssetComplerPath";
             this.labelGameMakerAssetComplerPath.Size = new System.Drawing.Size(159, 12);
             this.labelGameMakerAssetComplerPath.TabIndex = 22;
@@ -203,7 +204,7 @@
             // 
             // buttonGenerateFontChunks
             // 
-            this.buttonGenerateFontChunks.Location = new System.Drawing.Point(10, 374);
+            this.buttonGenerateFontChunks.Location = new System.Drawing.Point(10, 401);
             this.buttonGenerateFontChunks.Name = "buttonGenerateFontChunks";
             this.buttonGenerateFontChunks.Size = new System.Drawing.Size(394, 23);
             this.buttonGenerateFontChunks.TabIndex = 23;
@@ -214,7 +215,7 @@
             // labelGameMakerBuildTargetPath
             // 
             this.labelGameMakerBuildTargetPath.AutoSize = true;
-            this.labelGameMakerBuildTargetPath.Location = new System.Drawing.Point(8, 291);
+            this.labelGameMakerBuildTargetPath.Location = new System.Drawing.Point(8, 318);
             this.labelGameMakerBuildTargetPath.Name = "labelGameMakerBuildTargetPath";
             this.labelGameMakerBuildTargetPath.Size = new System.Drawing.Size(150, 12);
             this.labelGameMakerBuildTargetPath.TabIndex = 24;
@@ -222,7 +223,7 @@
             // 
             // buttonOpenGameMakerBuildTargetPath
             // 
-            this.buttonOpenGameMakerBuildTargetPath.Location = new System.Drawing.Point(413, 306);
+            this.buttonOpenGameMakerBuildTargetPath.Location = new System.Drawing.Point(413, 333);
             this.buttonOpenGameMakerBuildTargetPath.Name = "buttonOpenGameMakerBuildTargetPath";
             this.buttonOpenGameMakerBuildTargetPath.Size = new System.Drawing.Size(75, 23);
             this.buttonOpenGameMakerBuildTargetPath.TabIndex = 26;
@@ -232,7 +233,7 @@
             // 
             // buttonOpenGameMakerAssetCompilerPath
             // 
-            this.buttonOpenGameMakerAssetCompilerPath.Location = new System.Drawing.Point(413, 266);
+            this.buttonOpenGameMakerAssetCompilerPath.Location = new System.Drawing.Point(413, 293);
             this.buttonOpenGameMakerAssetCompilerPath.Name = "buttonOpenGameMakerAssetCompilerPath";
             this.buttonOpenGameMakerAssetCompilerPath.Size = new System.Drawing.Size(75, 23);
             this.buttonOpenGameMakerAssetCompilerPath.TabIndex = 0;
@@ -241,7 +242,7 @@
             // 
             // textBoxGameMakerBuildTargetPath
             // 
-            this.textBoxGameMakerBuildTargetPath.Location = new System.Drawing.Point(10, 306);
+            this.textBoxGameMakerBuildTargetPath.Location = new System.Drawing.Point(10, 333);
             this.textBoxGameMakerBuildTargetPath.Name = "textBoxGameMakerBuildTargetPath";
             this.textBoxGameMakerBuildTargetPath.Size = new System.Drawing.Size(394, 22);
             this.textBoxGameMakerBuildTargetPath.TabIndex = 25;
@@ -250,7 +251,7 @@
             // 
             // textBoxGameMakerAssetCompilerPath
             // 
-            this.textBoxGameMakerAssetCompilerPath.Location = new System.Drawing.Point(10, 266);
+            this.textBoxGameMakerAssetCompilerPath.Location = new System.Drawing.Point(10, 293);
             this.textBoxGameMakerAssetCompilerPath.Name = "textBoxGameMakerAssetCompilerPath";
             this.textBoxGameMakerAssetCompilerPath.Size = new System.Drawing.Size(394, 22);
             this.textBoxGameMakerAssetCompilerPath.TabIndex = 21;
@@ -259,7 +260,7 @@
             // 
             // textBoxUndertaleGameMakerProjectPath
             // 
-            this.textBoxUndertaleGameMakerProjectPath.Location = new System.Drawing.Point(10, 226);
+            this.textBoxUndertaleGameMakerProjectPath.Location = new System.Drawing.Point(10, 206);
             this.textBoxUndertaleGameMakerProjectPath.Name = "textBoxUndertaleGameMakerProjectPath";
             this.textBoxUndertaleGameMakerProjectPath.Size = new System.Drawing.Size(394, 22);
             this.textBoxUndertaleGameMakerProjectPath.TabIndex = 19;
@@ -268,7 +269,7 @@
             // 
             // textBoxReplaceFontChunksPath
             // 
-            this.textBoxReplaceFontChunksPath.Location = new System.Drawing.Point(10, 346);
+            this.textBoxReplaceFontChunksPath.Location = new System.Drawing.Point(10, 373);
             this.textBoxReplaceFontChunksPath.Name = "textBoxReplaceFontChunksPath";
             this.textBoxReplaceFontChunksPath.Size = new System.Drawing.Size(394, 22);
             this.textBoxReplaceFontChunksPath.TabIndex = 16;
@@ -311,11 +312,22 @@
             this.textBoxDataWinPath.Text = global::Heartache.HeartacheSettings.Default.DataWinPath;
             this.textBoxDataWinPath.TextChanged += new System.EventHandler(this.textBoxDataWinPath_TextChanged);
             // 
+            // buttonInjectCharacter
+            // 
+            this.buttonInjectCharacter.Location = new System.Drawing.Point(10, 234);
+            this.buttonInjectCharacter.Name = "buttonInjectCharacter";
+            this.buttonInjectCharacter.Size = new System.Drawing.Size(394, 23);
+            this.buttonInjectCharacter.TabIndex = 27;
+            this.buttonInjectCharacter.Text = "Inject Character to Game Maker Project";
+            this.buttonInjectCharacter.UseVisualStyleBackColor = true;
+            this.buttonInjectCharacter.Click += new System.EventHandler(this.buttonInjectCharacter_Click);
+            // 
             // Heartache
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(500, 540);
+            this.Controls.Add(this.buttonInjectCharacter);
             this.Controls.Add(this.buttonOpenGameMakerAssetCompilerPath);
             this.Controls.Add(this.buttonOpenGameMakerBuildTargetPath);
             this.Controls.Add(this.textBoxGameMakerBuildTargetPath);
@@ -380,5 +392,6 @@
         private System.Windows.Forms.TextBox textBoxGameMakerBuildTargetPath;
         private System.Windows.Forms.Button buttonOpenGameMakerBuildTargetPath;
         private System.Windows.Forms.Button buttonOpenGameMakerAssetCompilerPath;
+        private System.Windows.Forms.Button buttonInjectCharacter;
     }
 }

@@ -61,6 +61,12 @@ namespace Heartache.UI
             Program.Disassemble(DataWinPath, DisassembledDataPath);
         }
 
+        private void buttonInjectCharacter_Click(object sender, EventArgs e)
+        {
+            Program.InjectGlyphRangeToFontSettings(UndertaleGameMakerProjectPath,
+                                                   TranslationCSVPath);
+        }
+
         private void buttonGenerateFontChunks_Click(object sender, EventArgs e)
         {
             Program.GenerateReplaceFontChunks(UndertaleGameMakerProjectPath,
