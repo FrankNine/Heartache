@@ -7,7 +7,7 @@ namespace Heartache.Chunk
 {
     public class Form : Chunk
     {
-        const string TAG = "FORM";
+        public const string TAG = "FORM";
 
         Gen8 gen8 = new Gen8();
         Optn optn = new Optn();
