@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Heartache.Actuator;
+using System;
 using System.Windows.Forms;
 
 namespace Heartache.UI
@@ -58,29 +59,38 @@ namespace Heartache.UI
 
         private void buttonDisassemble_Click(object sender, EventArgs e)
         {
-            Program.Disassemble(DataWinPath, DisassembledDataPath);
+            new Disassembler().Disassemble(DataWinPath, DisassembledDataPath);
         }
 
         private void buttonInjectCharacter_Click(object sender, EventArgs e)
         {
-            Program.InjectGlyphRangeToFontSettings(UndertaleGameMakerProjectPath,
-                                                   TranslationCSVPath);
+            new GlyphInjector().InjectGlyphRangeToFontSettings
+            (
+                UndertaleGameMakerProjectPath,
+                TranslationCSVPath
+            );
         }
 
         private void buttonGenerateFontChunks_Click(object sender, EventArgs e)
         {
-            Program.GenerateReplaceFontChunks(UndertaleGameMakerProjectPath,
-                                              GameMakerAssetCompilerPath,
-                                              GameMakerBuildTargetPath,
-                                              ReplaceFontChunksPath);
+            new ReplaceFontChunkGenerator().GenerateReplaceFontChunks
+            (
+                UndertaleGameMakerProjectPath,
+                GameMakerAssetCompilerPath,
+                GameMakerBuildTargetPath,
+                ReplaceFontChunksPath
+            );
         }
 
         private void buttonAssemble_Click(object sender, EventArgs e)
         {
-            Program.Assemble(DisassembledDataPath,
-                             TranslationCSVPath,
-                             ReplaceFontChunksPath,
-                             TranslatedDataWinPath);
+            new Assembler().Assemble
+            (
+                DisassembledDataPath,
+                TranslationCSVPath,
+                ReplaceFontChunksPath,
+                TranslatedDataWinPath
+            );
         }
 
 

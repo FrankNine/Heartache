@@ -73,6 +73,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Actuator\Assembler.cs" />
+    <Compile Include="Actuator\Disassembler.cs" />
+    <Compile Include="Actuator\ReplaceFontChunkGenerator.cs" />
     <Compile Include="BinaryStreamOperator.cs" />
     <Compile Include="Chunk\Chunk.cs" />
     <Compile Include="Chunk\Form.cs" />
@@ -103,6 +106,7 @@
     <Compile Include="Chunk\SubChunk\Txtr.cs" />
     <Compile Include="Chunk\SubChunk\Vari.cs" />
     <Compile Include="FileIO.cs" />
+    <Compile Include="Actuator\GlyphInjector.cs" />
     <Compile Include="HeartacheSettings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
